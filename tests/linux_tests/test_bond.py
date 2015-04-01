@@ -27,7 +27,7 @@ class TestLinuxBond(object):
         bondmems = 'swp8 swp9'
         # If bond slaves exists
         mock_file_oneline.return_value = bondmems
-        assert_equals(self.iface.members.keys(), ['swp8', 'swp9'])
+        assert_equals(sorted(list(self.iface.members.keys())), ['swp8', 'swp9'])
         mock_file_oneline.assert_called_with(
             '/sys/class/net/bond0/bonding/slaves')
         # If bond slaves do not exist
