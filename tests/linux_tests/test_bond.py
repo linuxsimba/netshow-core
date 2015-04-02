@@ -12,8 +12,15 @@ import mock
 from asserts import assert_equals, mock_open_str
 from nose.tools import set_trace
 
+
 class TestLinuxBondMember(object):
-    pass
+    def setup(self):
+        self.bond = linux_bond.Bond('bond0')
+        self.iface = linux_bond.BondMember('eth1',master=self.bond)
+
+    def test_showing_master(self):
+        assert_equals(self.iface.master, self.bond)
+
 
 class TestLinuxBond(object):
     """ Linux bond tests """
@@ -43,7 +50,6 @@ class TestLinuxBond(object):
         # test failing to find something
         mock_file_oneline.return_value = None
         assert_equals(self.iface.mode, None)
-
 
     @mock.patch('netshowlib.linux.common.read_file_oneline')
     def test_getting_min_links(self, mock_file_oneline):

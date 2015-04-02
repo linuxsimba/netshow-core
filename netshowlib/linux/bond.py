@@ -8,6 +8,7 @@ try:
 except ImportError:
     from io import StringIO
 
+
 class Bond(linux_iface.Iface):
     """ Linux Bond attributes
 
@@ -45,7 +46,7 @@ class Bond(linux_iface.Iface):
 
     # -------------------
 
-    def parse_proc_net_bonding(self, bondfile):
+    def _parse_proc_net_bonding(self, bondfile):
         """
         parse ``/proc/net/bonding`` of this bond to get the system mac
         eventually this info will be in the kernel. I believe its
@@ -132,7 +133,6 @@ class Bond(linux_iface.Iface):
             return self._lacp
         return None
 
-
     @property
     def system_mac(self):
         """
@@ -140,8 +140,15 @@ class Bond(linux_iface.Iface):
         """
         self._system_mac = None
         bond_proc_file = "/proc/net/bonding/%s" % (self.name)
-        self.parse_proc_net_bonding(bond_proc_file)
+        self._parse_proc_net_bonding(bond_proc_file)
         return self._system_mac
+
+    def __str__(self):
+        """
+        string output function for the class
+        """
+        return "Linux Bond Interface '%s'. Member Count: %s" % (self.name,
+                                                                len(self.members.keys()))
 
 
 class BondMember(linux_iface.Iface):
@@ -150,7 +157,7 @@ class BondMember(linux_iface.Iface):
     * **master**: pointer to :class:`Bond<netshowlib.linux.bond.Bond>` instance \
         that this interface belongs to.
     * **link_failures**: bond driver reports number of times bond member flaps
-    * **state**: returns whether bond member is active (1) or inactive(0) in a bond \
+    * **bondstate**: returns whether bond member is active (1) or inactive(0) in a bond \
         **irrespective** of its carrier/linkstate status. What this means is that \
         the link can be up, but not in the bond.
     Examples:
@@ -163,21 +170,65 @@ class BondMember(linux_iface.Iface):
         # first calling the bond and then running the members
         # property.
         bond0 = nn.bond.Bond('bond0')
-        bond0.members
-        >>[ output ]
+        print len(bond0.members.keys())
+        >> 2
 
         # on the rare case you know the bond member but want to get
         # bond master information you can.
         bondmem = nn.bond_member.BondMember('eth1')
-        bondmem.master
-        >> [ output ]
+        print bondmem.master
+        >> Linux Bond Interface 'bond0'. Member Count: 1
 
     """
     def __init__(self, name, cache=None, master=None):
         linux_iface.Iface.__init__(self, name, cache)
         self._master = master
-        self._link_failures = None
-        self._state = None
+        self._linkfailures = None
+        self._bondstate = None
+
+    # -------------------
+    # Get link failure count.
+    # determine if member is in bond by checking agg ID
+    # parse /proc/net/bonding to get this info
+    # J Toppins informed me that this is most generic way to get
+    # bonding info across multiple linux platforms.
+    # grabbing it from /sys/class/net is not super reliable
+    # eventually everything can be grabbed from netlink, which will be done
+    # in a future release.
+    def _parse_proc_net_bonding(self):
+        """
+        parse /proc/net/bonding to get link failure and agg_id info
+        """
+        # open proc/net/bonding
+        filename = "/proc/net/bonding/%s" % (self.master.name)
+        result = open(filename).read()
+        bondslavename = None
+        fileio = StringIO(result)
+        master_agg_id = None
+        for line in fileio:
+            if len(line.strip()) <= 0:
+                continue
+            # make all char lowercase
+            line = line.lower()
+            # get bondslave name
+            if re.match(r'slave\s+interface', line):
+                bondslavename = line.split()[-1]
+                continue
+            elif re.match(r'\s+aggregator\s+id', line):
+                master_agg_id = line.split()[-1]
+                continue
+            # get link failure count
+            elif re.match(r'aggregator\s+id', line):
+                if bondslavename == self.name:
+                    agg_id = line.split()[2]
+                    if master_agg_id == agg_id:
+                        self._bondstate = '1'
+                    else:
+                        self._bondstate = '0'
+            elif re.match(r'link\s+failure', line):
+                _count = line.split()[-1]
+                if bondslavename == self.name:
+                    self._linkfailures = _count
 
     # -------------------
 
@@ -196,3 +247,27 @@ class BondMember(linux_iface.Iface):
                 bondname = self.read_symlink('master')
                 self._master = Bond(bondname)
         return self._master
+
+    @property
+    def bondstate(self):
+        """
+        :return: state of interface in the bond. can be 0(inactive) or 1(active)
+        """
+        # if LACP check /proc/net/bonding for agg matching state
+        if self.master.mode == '4':
+            if self.linkstate < 2:
+                self._bondstate = 0
+        # else use carrier state to determine bond state
+        else:
+            self._parse_proc_net_bonding()
+
+    @property
+    def linkfailures(self):
+        """
+        number of mii transitions bond member reports while the bond is active
+        this counter cannot be cleared. will reset when the bond is reinitialized
+        via the ifdown/ifup process
+
+        :return: number of mii transitions
+        """
+        self._parse_proc_net_bonding()
