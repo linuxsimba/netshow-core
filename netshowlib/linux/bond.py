@@ -235,17 +235,14 @@ class BondMember(linux_iface.Iface):
     # Define properties
 
     @property
-    def master(self, bondmaster=None):
+    def master(self):
         """
         :return: pointer to  :class:`Bond<netshowlib.linux.bond.Bond>` instance that \
         this interface belongs to
         """
         if not self._master:
-            if bondmaster:
-                self._master = bondmaster
-            else:
-                bondname = self.read_symlink('master')
-                self._master = Bond(bondname)
+            bondname = self.read_symlink('master')
+            self._master = Bond(bondname)
         return self._master
 
     @property
