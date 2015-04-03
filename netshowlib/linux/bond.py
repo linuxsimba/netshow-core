@@ -83,7 +83,7 @@ class Bond(linux_iface.Iface):
             if set(fileoutput.split()) != set(self._members.keys()):
                 self._members = {}
                 for i in fileoutput.split():
-                    self._members[i] = BondMember(i, self)
+                    self._members[i] = BondMember(i, master=self)
         else:
             self._members = {}
 
