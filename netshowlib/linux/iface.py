@@ -41,11 +41,13 @@ def iface_type(name, cache=None):
     if test_iface.is_bridge():
         bridge = nn.import_module('netshowlib.linux.bridge')
         return bridge.Bridge(name, cache=cache)
+    if test_iface.is_bridgemem():
+        bridge = nn.import_module('netshowlib.linux.bridge')
+        return bridge.BridgeMember(name, cache=cache)
     elif test_iface.is_bond():
         bond = nn.import_module('netshowlib.linux.bond')
         return bond.Bond(name, cache=cache)
     return test_iface
-
 
 class Iface(object):
     """ Linux Iface attributes
@@ -62,7 +64,9 @@ class Iface(object):
         associated with the interface
     * **ip_addr_assign**: If the address is configured via \
         DHCP this property is set
-    * **ipaddr**: pointer to :class:`linux.ipaddr<netshowlib.linux.ipaddr.Ipaddr>` class instance
+    * **ipaddr**: pointer to  \
+    :class:`linux.ipaddr<netshowlib.linux.ipaddr.Ipaddr>` \
+    class instance
     * **stp**: pointer to :mod:`linux.stp.kernel<netshowlib.linux.stp.kernel` Bridge class
     or BridgeMember class
     """
@@ -78,7 +82,6 @@ class Iface(object):
         self._feature_cache = cache
         self._ipaddr = ipaddr.Ipaddr(name, cache)
         self._ip_addr_assign = None
-        self._stp = self.discover_stp_type()
 
 
 # ----------------------
@@ -90,17 +93,6 @@ class Iface(object):
         return re.compile(r"%s\.\d+$" % _ifacename)
 
 # -----------------------
-
-    def discover_stp_type(self):
-        """
-        :return: Return a Bridge or BridgeMember instance
-        of :mod:`netshowlib.linux.kernel.stp` module
-        """
-        if self.is_bridgemem():
-            return kernel_stp.BridgeMember(self.name)
-        elif self.is_bridge():
-            return kernel_stp.Bridge(self.name)
-
 
     def read_symlink(self, attr):
         """

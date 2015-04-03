@@ -17,16 +17,27 @@ from nose.tools import set_trace
 
 @mock.patch('netshowlib.linux.iface.Iface.is_bond')
 @mock.patch('netshowlib.linux.iface.Iface.is_bridge')
-def test_iface_type(mock_bridge, mock_bond):
+@mock.patch('netshowlib.linux.iface.Iface.is_bridgemem')
+def test_iface_type(mock_bridgemem,
+                    mock_bridge, mock_bond):
     # port is a bridge
+    mock_bond.return_value = False
+    mock_bridgemem.return_value = False
     mock_bridge.return_value = True
     eth1 = linux_iface.iface_type('eth1')
     assert_equals(isinstance(eth1, linux_bridge.Bridge), True)
     # port is bond
+    mock_bridgemem.return_value = False
     mock_bridge.return_value = False
     mock_bond.return_value = True
     bond0 = linux_iface.iface_type('bond0')
     assert_equals(isinstance(bond0, linux_bond.Bond), True)
+    # port is bridgemem
+    mock_bridgemem.return_value = True
+    mock_bridge.return_value = False
+    mock_bond.return_value = False
+    bridgemem = linux_iface.iface_type('eth2')
+    assert_equals(isinstance(bridgemem, linux_bridge.BridgeMember), True)
     # regular port
     mock_bridge.return_value = False
     mock_bond.return_value = False
