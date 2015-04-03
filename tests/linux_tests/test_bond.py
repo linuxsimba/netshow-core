@@ -47,6 +47,12 @@ class TestLinuxBondMember(object):
             mock_open.return_value = bondingfile
             assert_equals(self.iface.bondstate, 0)
 
+    def test_link_failures(self):
+        bondingfile = open('tests/linux_tests/proc_net_bonding_agg_id_match.txt')
+        with mock.patch(mock_open_str()) as mock_open:
+            mock_open.return_value = bondingfile
+            assert_equals(self.iface.linkfailures, 12)
+
 
 class TestLinuxBond(object):
     """ Linux bond tests """

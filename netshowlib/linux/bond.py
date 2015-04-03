@@ -220,18 +220,15 @@ class BondMember(linux_iface.Iface):
             elif re.match(r'\s+aggregator\s+id', line):
                 master_agg_id = line.split()[-1]
                 continue
-            # get link failure count
             elif re.match(r'aggregator\s+id', line):
                 if bondslavename == self.name:
                     agg_id = line.split()[2]
-                    if master_agg_id == agg_id:
-                        self._bondstate = 1
-                    else:
-                        self._bondstate = 0
-        #    elif re.match(r'link\s+failure', line):
-        #        _count = line.split()[-1]
-        #        if bondslavename == self.name:
-        #            self._linkfailures = _count
+                    _state = 1 if master_agg_id == agg_id else 0
+                    self._bondstate = _state
+            elif re.match(r'link\s+failure', line):
+                _count = line.split()[-1]
+                if bondslavename == self.name:
+                    self._linkfailures = int(_count)
 
     # -------------------
 
@@ -274,3 +271,4 @@ class BondMember(linux_iface.Iface):
         :return: number of mii transitions
         """
         self._parse_proc_net_bonding()
+        return self._linkfailures
