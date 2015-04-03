@@ -9,6 +9,7 @@ import netshowlib.linux.ipaddr as ipaddr
 import os
 import re
 from datetime import datetime
+import netshowlib.linux.stp.kernel as kernel_stp
 
 """
 Variables for port type bitmap entry
@@ -61,6 +62,9 @@ class Iface(object):
         associated with the interface
     * **ip_addr_assign**: If the address is configured via \
         DHCP this property is set
+    * **ipaddr**: pointer to :class:`linux.ipaddr<netshowlib.linux.ipaddr.Ipaddr>` class instance
+    * **stp**: pointer to :mod:`linux.stp.kernel<netshowlib.linux.stp.kernel` Bridge class
+    or BridgeMember class
     """
     def __init__(self, name, cache=None):
         self._mac = None
@@ -74,6 +78,7 @@ class Iface(object):
         self._feature_cache = cache
         self._ipaddr = ipaddr.Ipaddr(name, cache)
         self._ip_addr_assign = None
+        self._stp = self.discover_stp_type()
 
 
 # ----------------------
@@ -85,6 +90,17 @@ class Iface(object):
         return re.compile(r"%s\.\d+$" % _ifacename)
 
 # -----------------------
+
+    def discover_stp_type(self):
+        """
+        :return: Return a Bridge or BridgeMember instance
+        of :mod:`netshowlib.linux.kernel.stp` module
+        """
+        if self.is_bridgemem():
+            return kernel_stp.BridgeMember(self.name)
+        elif self.is_bridge():
+            return kernel_stp.Bridge(self.name)
+
 
     def read_symlink(self, attr):
         """
@@ -233,6 +249,14 @@ class Iface(object):
 
 # Port Category Checkers
 # ----------------------
+
+    def is_bridgemem(self):
+        """
+        :return: true if port is a bridge member
+        """
+        self.is_bridgemem_initial_test()
+        return common.check_bit(self._port_type, L2_INT) and \
+            not common.check_bit(self._port_type, BRIDGE_INT)
 
     def is_access(self):
         """

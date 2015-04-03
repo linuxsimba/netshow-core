@@ -190,9 +190,11 @@ class TestLinuxIface(object):
         assert_equals(self.iface.is_l2(), True)
         assert_equals(self.iface.is_trunk(), False)
         assert_equals(self.iface.is_access(), True)
+        assert_equals(self.iface.is_bridgemem(), True)
         # check if trunk port
         mock_bridgemem_port.return_value = 2
         assert_equals(self.iface.is_trunk(), True)
+        assert_equals(self.iface.is_bridgemem(), True)
 
     def test_is_subint_initial_test(self):
         # port is not a subint int
