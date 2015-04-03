@@ -56,7 +56,7 @@ class Bond(linux_iface.Iface):
         """
         try:
             result = open(bondfile).read()
-        except IOError:
+        except (ValueError, IOError):
             return
         fileio = StringIO(result)
         for line in fileio:
@@ -200,8 +200,11 @@ class BondMember(linux_iface.Iface):
         parse /proc/net/bonding to get link failure and agg_id info
         """
         # open proc/net/bonding
-        filename = "/proc/net/bonding/%s" % (self.master.name)
-        result = open(filename).read()
+        bondfile = "/proc/net/bonding/%s" % (self.master.name)
+        try:
+            result = open(bondfile).read()
+        except (ValueError, IOError):
+            return
         bondslavename = None
         fileio = StringIO(result)
         master_agg_id = None
@@ -222,13 +225,13 @@ class BondMember(linux_iface.Iface):
                 if bondslavename == self.name:
                     agg_id = line.split()[2]
                     if master_agg_id == agg_id:
-                        self._bondstate = '1'
+                        self._bondstate = 1
                     else:
-                        self._bondstate = '0'
-            elif re.match(r'link\s+failure', line):
-                _count = line.split()[-1]
-                if bondslavename == self.name:
-                    self._linkfailures = _count
+                        self._bondstate = 0
+        #    elif re.match(r'link\s+failure', line):
+        #        _count = line.split()[-1]
+        #        if bondslavename == self.name:
+        #            self._linkfailures = _count
 
     # -------------------
 
@@ -255,11 +258,11 @@ class BondMember(linux_iface.Iface):
         """
         # if LACP check /proc/net/bonding for agg matching state
         if self.master.mode == '4':
-            if self.linkstate < 2:
-                self._bondstate = 0
-        # else use carrier state to determine bond state
-        else:
             self._parse_proc_net_bonding()
+        else:
+            self._bondstate = 1 if self.linkstate == 2 else 0
+
+        return self._bondstate
 
     @property
     def linkfailures(self):

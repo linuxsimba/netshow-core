@@ -9,6 +9,7 @@
 # pylint: disable=F0401
 import netshowlib.linux.bond as linux_bond
 import mock
+from mock import MagicMock
 from asserts import assert_equals, mock_open_str
 from nose.tools import set_trace
 
@@ -16,10 +17,35 @@ from nose.tools import set_trace
 class TestLinuxBondMember(object):
     def setup(self):
         self.bond = linux_bond.Bond('bond0')
-        self.iface = linux_bond.BondMember('eth1',master=self.bond)
+        self.iface = linux_bond.BondMember('eth22', master=self.bond)
 
     def test_showing_master(self):
         assert_equals(self.iface.master, self.bond)
+
+    def test_bondstate(self):
+        mock_read_from_sys = MagicMock()
+        self.iface.master.read_from_sys = mock_read_from_sys
+        mock_read_from_sys.return_value = 'active-backup 2'
+        # if lacp is not set and linkstate is not up
+        self.iface._linkstate = 1
+        assert_equals(self.iface.bondstate, 0)
+
+        # if lacp is not set and linkstate is up
+        self.iface._linkstate = 2
+        assert_equals(self.iface.bondstate, 1)
+
+        # if lacp is set and agg_id is same
+        mock_read_from_sys.return_value = '802.3ad 4'
+        bondingfile = open('tests/linux_tests/proc_net_bonding_agg_id_match.txt')
+        with mock.patch(mock_open_str()) as mock_open:
+            mock_open.return_value = bondingfile
+            assert_equals(self.iface.bondstate, 1)
+
+        # if lacp is set and agg_id is different
+        bondingfile = open('tests/linux_tests/proc_net_bonding_agg_id_no_match.txt')
+        with mock.patch(mock_open_str()) as mock_open:
+            mock_open.return_value = bondingfile
+            assert_equals(self.iface.bondstate, 0)
 
 
 class TestLinuxBond(object):

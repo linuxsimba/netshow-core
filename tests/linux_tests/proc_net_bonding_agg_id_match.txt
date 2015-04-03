@@ -37,7 +37,7 @@ Permanent HW addr: 00:02:00:00:00:36
 Aggregator ID: 2
 Slave queue ID: 0
 
-Slave Interface: eth1
+Slave Interface: eth22
 MII Status: up
 Speed: 10000 Mbps
 Duplex: full
