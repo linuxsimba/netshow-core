@@ -3,6 +3,7 @@ related to linux bridge and bridge member interfaces """
 import netshowlib.linux.iface as linux_iface
 import os
 
+
 def update_stp_state(stp_hash, iface_to_add, iface_under_test):
     """
     Updates stp state dict from BridgeMember and Bridge
@@ -20,7 +21,6 @@ def update_stp_state(stp_hash, iface_to_add, iface_under_test):
     designated_bridge = iface_under_test.read_from_sys('brport/designated_bridge')
     if designated_root == designated_bridge:
         stp_hash.get('root').append(iface_to_add)
-
 
 
 class BridgeMember(linux_iface.Iface):
@@ -46,19 +46,32 @@ class BridgeMember(linux_iface.Iface):
         }
         self._cache = cache
 
+    def __str__(self):
+        return "my name is %s" % self.name
+
     @property
     def state(self):
         """
         :return: dict of stp states with associated \
             :class:`linux.bridge<Bridge>` instances
         """
+        self._state = {
+            'disabled': [],
+            'blocking': [],
+            'forwarding': [],
+            'root': [],
+            'intransition': []
+        }
         # go through list of subints look for bridge members
         # understand stp config for that interface and update
         # _state dict.
         for subintname in self.get_sub_interfaces():
             subiface = linux_iface.Iface(subintname)
+            bridgename = subiface.read_symlink('brport/bridge')
+            bridgeiface = Bridge(bridgename, cache=self._cache)
             if subiface.is_bridgemem():
-                update_stp_state(self._state, subiface, self)
+                update_stp_state(self._state, bridgeiface, subiface)
+        return self._state
 
 
 class Bridge(linux_iface.Iface):
@@ -130,14 +143,24 @@ class Bridge(linux_iface.Iface):
         """
         :return: dict of stp state of bridge members
         """
+        self._member_state = {
+            'disabled': [],
+            'blocking': [],
+            'forwarding': [],
+            'root': [],
+            'intransition': []
+        }
+
         # go through tagged members first
         for _ifacename, _iface in self.tagged_members.items():
             subifacename = "%s.%s" % (_ifacename, self.vlan_tag)
             subiface = linux_iface.Iface(subifacename)
             update_stp_state(self._member_state, _iface, subiface)
-        for _ifacename, _iface in  self.untagged_members.items():
+
+        for _ifacename, _iface in self.untagged_members.items():
             update_stp_state(self._member_state, _iface, _iface)
 
+        return self._member_state
 
     @property
     def members(self):
