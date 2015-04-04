@@ -9,7 +9,6 @@ import netshowlib.linux.ipaddr as ipaddr
 import os
 import re
 from datetime import datetime
-import netshowlib.linux.stp.kernel as kernel_stp
 
 """
 Variables for port type bitmap entry
@@ -94,7 +93,7 @@ class Iface(object):
 
 # -----------------------
 
-    def read_symlink(self, attr):
+    def read_strsymlink(self, attr):
         """
         :return symlink under a /sys/class/net iface config.
         """
@@ -136,10 +135,11 @@ class Iface(object):
         if os.path.exists(self.sys_path('brport')):
             _bridgemem_type = 1
 
-        for subint in self.get_sub_interfaces():
-            if os.path.exists(self.sys_path('brport', subint)):
-                _bridgemem_type = 2
-                break
+        if not self.is_subint():
+            for subint in self.get_sub_interfaces():
+                if os.path.exists(self.sys_path('brport', subint)):
+                    _bridgemem_type = 2
+                    break
         return _bridgemem_type
 
     def check_port_dhcp_assignment(self):
