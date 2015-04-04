@@ -3,6 +3,25 @@ related to linux bridge and bridge member interfaces """
 import netshowlib.linux.iface as linux_iface
 import os
 
+def update_stp_state(stp_hash, iface_to_add, iface_under_test):
+    """
+    Updates stp state dict from BridgeMember and Bridge
+    """
+    iface_stp_state = iface_under_test.read_from_sys('brport/state')
+    if iface_stp_state == '0':
+        stp_hash.get('disabled').append(iface_to_add)
+    elif iface_stp_state == '1' or iface_stp_state == '2':
+        stp_hash.get('intransition').append(iface_to_add)
+    elif iface_stp_state == '3':
+        stp_hash.get('forwarding').append(iface_to_add)
+    elif iface_stp_state == '4':
+        stp_hash.get('blocking').append(iface_to_add)
+    designated_root = iface_under_test.read_from_sys('brport/designated_root')
+    designated_bridge = iface_under_test.read_from_sys('brport/designated_bridge')
+    if designated_root == designated_bridge:
+        stp_hash.get('root').append(iface_to_add)
+
+
 
 class BridgeMember(linux_iface.Iface):
     """ Linux Bridge Member attributes
@@ -18,7 +37,28 @@ class BridgeMember(linux_iface.Iface):
     """
     def __init__(self, name, cache=None):
         linux_iface.Iface.__init__(self, name, cache)
-        self._state = None
+        self._state = {
+            'disabled': [],
+            'blocking': [],
+            'forwarding': [],
+            'root': [],
+            'intransition': []
+        }
+        self._cache = cache
+
+    @property
+    def state(self):
+        """
+        :return: dict of stp states with associated \
+            :class:`linux.bridge<Bridge>` instances
+        """
+        # go through list of subints look for bridge members
+        # understand stp config for that interface and update
+        # _state dict.
+        for subintname in self.get_sub_interfaces():
+            subiface = linux_iface.Iface(subintname)
+            if subiface.is_bridgemem():
+                update_stp_state(self._state, subiface, self)
 
 
 class Bridge(linux_iface.Iface):
@@ -28,6 +68,9 @@ class Bridge(linux_iface.Iface):
     * **untagged_members**: list of untagged bridge members *(access)*
     * **members**: all bridge members
     * **vlan_tag**: vlan ID tag if applicable. empty string means no tag.
+    * **member_state**:  provides stp port state summary regarding the bridge members
+    * **root_priority**: root priority for the spanning tree domain
+    * **bridge_priority**: bridge priority
 
 
     """
@@ -38,6 +81,13 @@ class Bridge(linux_iface.Iface):
         self._members = {}
         self._vlan_tag = ''
         self._cache = cache
+        self._member_state = {
+            'disabled': [],
+            'blocking': [],
+            'forwarding': [],
+            'root': [],
+            'intransition': []
+        }
 
     # -----------------
 
@@ -72,6 +122,22 @@ class Bridge(linux_iface.Iface):
             else:
                 self._untagged_members[membername_arr[0]] = bridgemem
             self._members[membername_arr[0]] = bridgemem
+
+    # ---------------------------
+
+    @property
+    def member_state(self):
+        """
+        :return: dict of stp state of bridge members
+        """
+        # go through tagged members first
+        for _ifacename, _iface in self.tagged_members.items():
+            subifacename = "%s.%s" % (_ifacename, self.vlan_tag)
+            subiface = linux_iface.Iface(subifacename)
+            update_stp_state(self._member_state, _iface, subiface)
+        for _ifacename, _iface in  self.untagged_members.items():
+            update_stp_state(self._member_state, _iface, _iface)
+
 
     @property
     def members(self):
