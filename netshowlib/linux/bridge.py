@@ -1,8 +1,25 @@
 """ This module is responsible for finding properties
-related to linux bridge interfaces """
+related to linux bridge and bridge member interfaces """
 import netshowlib.linux.iface as linux_iface
 import os
-import re
+
+
+class BridgeMember(linux_iface.Iface):
+    """ Linux Bridge Member attributes
+
+    * **state**:  stp vlan information for the port. Example:
+    .. code-block:: python
+       >> print(iface.state)
+       >> { 'forwarding':  [list of bridges ],
+            'blocking': [ list of bridges ],
+            'root': [ list of bridges],
+            'intransition': [ list of bridges]
+          }
+    """
+    def __init__(self, name, cache=None):
+        linux_iface.Iface.__init__(self, name, cache)
+        self._state = None
+
 
 class Bridge(linux_iface.Iface):
     """ Linux Bridge interface attributes
@@ -10,41 +27,59 @@ class Bridge(linux_iface.Iface):
     * **tagged_members**: list of tagged bridge members *(part of a trunk)*
     * **untagged_members**: list of untagged bridge members *(access)*
     * **members**: all bridge members
-    * **vlan_filtering**: if true \
-    `vlan filtering <http://lwn.net/Articles/538877/>`_ is enabled
     * **vlan_tag**: vlan ID tag if applicable. empty string means no tag.
 
 
     """
     def __init__(self, name, cache=None):
         linux_iface.Iface.__init__(self, name, cache)
-        self._tagged_members = []
-        self._untagged_members = []
-        self._members = []
-        self._vlan_filtering = False
+        self._tagged_members = {}
+        self._untagged_members = {}
+        self._members = {}
         self._vlan_tag = ''
+        self._cache = cache
 
-    @property
-    def vlan_filtering(self):
+    # -----------------
+
+    def _memberlist_str(self):
         """
-        :return: true if  ``/sys/class/net/[iface]/vlan_filtering`` exists
+        :return: list of bridge member names. both tagged and untagged
         """
-        vlan_filtering = self.read_from_sys('bridge/vlan_filtering')
-        if vlan_filtering and int(vlan_filtering) == 1:
-            self._vlan_filtering = True
-        return self._vlan_filtering
+        dirlist = []
+        try:
+            dirlist = os.listdir(self.sys_path('brif'))
+        except OSError:
+            pass
+        return dirlist
+
+    def _get_members(self):
+        """
+        :return: get the members of a bridge into the tagged , untagged and total \
+            member names and number structures
+        """
+        self._members = {}
+        self._tagged_members = {}
+        self._untagged_members = {}
+        member_list = self._memberlist_str()
+        for _name in member_list:
+            # take the name of the main physical or logical interface
+            # not the subinterface
+            membername_arr = _name.split('.')
+            bridgemem = BridgeMember(membername_arr[0],
+                                     cache=self._cache)
+            if len(membername_arr) == 2:
+                self._tagged_members[membername_arr[0]] = bridgemem
+            else:
+                self._untagged_members[membername_arr[0]] = bridgemem
+            self._members[membername_arr[0]] = bridgemem
 
     @property
     def members(self):
         """
         :return: list of bridge port members
         """
-        try:
-            self._members = os.listdir(self.sys_path('brif'))
-        except OSError:
-            pass
+        self._get_members()
         return self._members
-
 
     @property
     def tagged_members(self):
@@ -53,11 +88,7 @@ class Bridge(linux_iface.Iface):
 
         :return: list of tagged bridge members.
         """
-        self._tagged_members = []
-        for i in self.members:
-            _match = re.match(self.subint_port_regex(), i)
-            if _match:
-                self._tagged_members.append(_match.group(0))
+        self._get_members()
         return self._tagged_members
 
     @property
@@ -67,11 +98,7 @@ class Bridge(linux_iface.Iface):
 
         :return: list of untagged bridge members
         """
-        self._untagged_members = []
-        for i in self.members:
-            _match = re.match(self.subint_port_regex(), i)
-            if not _match:
-                self._untagged_members.append(i)
+        self._get_members()
         return self._untagged_members
 
     @property
@@ -85,24 +112,23 @@ class Bridge(linux_iface.Iface):
             vlan translation, then all tags are printed as a comma \
             delimited string. Empty string means no tag.
         """
-        # Do nothing if bridge is vlan-aware
-        if self.vlan_filtering:
-            return
 
         # this may print something like '100,400', meaning that this bridge
         # is doing vlan translation. If string is empty('') then no tag is found
         # ----------------------
         # the messy looking function below is doing the following:
-        # take list of tagged members for example ['swp1.100', 'swp2.100']
-        # strip off tag with map func & put in array so it is ['100',100']
+        # take a list of members ['eth1.100', 'eth2', 'eth3.100'], remove all untagged
+        #   iface
+        # take list of tagged members for example [ eth1.100', 'eth3.100']
+        # strip off tag with list comprehension & put in array so it is ['100',100']
         # apply set() to the array so it removes all non-unique values. becomes
         # set([100])
         # then convert back to a list
         # then sorts it, uses the sorted([list] key=int)
         # apply str.join function on list.
         # on an empty tagged_member output it will produce ''
-        #-----------------------------------
+        # -----------------------------------
         self._vlan_tag = ', '.join(sorted(list(set(
-            [x.split('.')[1] for x in self.tagged_members])), key=int))
+            [x.split('.')[1] for x in self._memberlist_str()
+             if len(x.split('.')) > 1])), key=int))
         return self._vlan_tag
-
