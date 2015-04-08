@@ -163,6 +163,7 @@ class TestLinuxIface(object):
         mock_listdir.return_value = ['/stuff/m/eth1.25', '/stuff/m/eth1.100']
         result = self.iface.get_sub_interfaces()
         assert_equals(result, ['eth1.25', 'eth1.100'])
+        mock_listdir.assert_called_with('/sys/class/net/eth1.*')
 
     @mock.patch('netshowlib.linux.iface.Iface.get_sub_interfaces')
     @mock.patch('netshowlib.linux.iface.os.path.exists')
