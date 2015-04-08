@@ -158,12 +158,11 @@ class TestLinuxIface(object):
         mock_path_exists.side_effect = mod_args_generator(values)
         assert_equals(self.iface.is_bondmem(), True)
 
-    @mock.patch('netshowlib.linux.iface.os.listdir')
+    @mock.patch('netshowlib.linux.iface.glob.glob')
     def test_get_sub_interfaces(self, mock_listdir):
-        mock_listdir.return_value = ['eth1', 'eth1.100', 'eth1.25',
-                                     'eth2', 'eth2.50', 'eth3', 'eth3.35']
+        mock_listdir.return_value = ['/stuff/m/eth1.25', '/stuff/m/eth1.100']
         result = self.iface.get_sub_interfaces()
-        assert_equals(result, ['eth1.100', 'eth1.25'])
+        assert_equals(result, ['eth1.25', 'eth1.100'])
 
     @mock.patch('netshowlib.linux.iface.Iface.get_sub_interfaces')
     @mock.patch('netshowlib.linux.iface.os.path.exists')

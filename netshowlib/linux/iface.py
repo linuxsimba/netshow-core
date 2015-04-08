@@ -7,6 +7,7 @@ import netshowlib.netshowlib as nn
 import netshowlib.linux.common as common
 import netshowlib.linux.ipaddr as ipaddr
 import os
+import glob
 import re
 from datetime import datetime
 import netshowlib.linux.stp.kernel as kernel_stp
@@ -120,10 +121,10 @@ class Iface(object):
         :return: list of sub interfaces of port
         """
         subints = []
-        for i in os.listdir(self._sys_path_root):
-            _m0 = re.match(self.subint_port_regex(self._name), i)
-            if _m0:
-                subints.append(i)
+        filepath = "%s/%s.*" % (self._sys_path_root, self._name)
+        for _file in glob.glob(filepath):
+            subints.append(_file.split('/')[-1])
+
         return subints
 
     def get_bridgemem_port_type(self):
