@@ -172,6 +172,7 @@ class TestLinuxIface(object):
         # port is not a l2 port
         values = {'/sys/class/net/eth1/brport': False}
         mock_path_exists.side_effect = mod_args_generator(values)
+        mock_get_subints.return_value = []
         assert_equals(self.iface.get_bridgemem_port_type(), 0)
         # port is not a l2 port but has subints that are l2 ports
         values = {'/sys/class/net/eth1/brport': False,

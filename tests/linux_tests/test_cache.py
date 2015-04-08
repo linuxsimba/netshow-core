@@ -12,12 +12,13 @@
 # pylint: disable=F0401
 # pylint: disable=E0611
 # pylint: disable=W0611
+
 from asserts import assert_equals, mod_args_generator
 import netshowlib.linux.cache as linux_cache
 from nose.tools import set_trace
 import mock
 from mock import MagicMock
-import os
+
 
 class TestLinuxCache(object):
 
