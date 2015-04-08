@@ -23,7 +23,7 @@ class TestKernelStpBridgeMem(object):
     @mock.patch('netshowlib.linux.iface.os.path.exists')
     @mock.patch('netshowlib.linux.common.read_symlink')
     def test_state_access_port(self, mock_symlink, mock_os_path,
-                   mock_oneline):
+                               mock_oneline):
         mock_subint = MagicMock()
         self.iface.get_sub_interfaces = mock_subint
         # bridgemember is access port
@@ -46,7 +46,8 @@ class TestKernelStpBridgeMem(object):
             'blocking': [],
             'forwarding': [briface],
             'root': [briface],
-            'intransition': []
+            'intransition': [],
+            'stp_disabled': []
         })
 
     @mock.patch('netshowlib.linux.common.read_file_oneline')
@@ -55,41 +56,49 @@ class TestKernelStpBridgeMem(object):
     def test_state_trunk_port(self, mock_symlink, mock_os_path,
                               mock_oneline):
         mock_subint = MagicMock()
-        mock_subint.return_value = ['eth1.11', 'eth1.20']
+        mock_subint.return_value = ['eth1.11', 'eth1.20', 'eth1.30']
         self.iface.get_sub_interfaces = mock_subint
         # bridgemember is trunk port
         values = {
             '/sys/class/net/eth1/brport': True,
             '/sys/class/net/eth1.11/brport': True,
-            '/sys/class/net/eth1.20/brport': False
+            '/sys/class/net/eth1.20/brport': False,
+            '/sys/class/net/eth1.30/brport': True,
         }
         values2 = {
             '/sys/class/net/eth1/brport/state': '3',
             '/sys/class/net/eth1/brport/designated_root': 'aaa',
             '/sys/class/net/eth1/brport/designated_bridge': 'aaa',
             '/sys/class/net/eth1.11/brport/state': '0',
+            '/sys/class/net/eth1.11/brport/bridge/bridge/stp_state': '1',
             '/sys/class/net/eth1.11/brport/designated_root': 'aaa',
-            '/sys/class/net/eth1.11/brport/designated_bridge': 'aaa'
+            '/sys/class/net/eth1.11/brport/designated_bridge': 'aaa',
+            '/sys/class/net/eth1.30/brport/state': '0',
+            '/sys/class/net/eth1.30/brport/bridge/bridge/stp_state': '0'
+
         }
         values3 = {
             '/sys/class/net/eth1/brport/bridge': 'br10',
             '/sys/class/net/eth1.11/brport/bridge': 'br11',
-            '/sys/class/net/eth1.20/brport/bridge': None
+            '/sys/class/net/eth1.20/brport/bridge': None,
+            '/sys/class/net/eth1.30/brport/bridge': 'br30'
         }
         mock_symlink.side_effect = mod_args_generator(values3)
         mock_oneline.side_effect = mod_args_generator(values2)
         mock_os_path.side_effect = mod_args_generator(values)
         br10 = linux_bridge.Bridge('br10')
         br11 = linux_bridge.Bridge('br11')
+        br30 = linux_bridge.Bridge('br30')
         linux_bridge.BRIDGE_CACHE['br10'] = br10
         linux_bridge.BRIDGE_CACHE['br11'] = br11
+        linux_bridge.BRIDGE_CACHE['br30'] = br30
         assert_equals(self.stp.state, {
             'disabled': [br11],
             'blocking': [],
             'forwarding': [br10],
             'root': [br10, br11],
+            'stp_disabled': [br30],
             'intransition': []
-
         })
 
 class TestLinuxBridgeMember(object):

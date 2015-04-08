@@ -15,7 +15,12 @@ def update_stp_state(stp_hash, iface_to_add, iface_under_test):
     """
     iface_stp_state = iface_under_test.read_from_sys('brport/state')
     if iface_stp_state == '0':
-        stp_hash.get('disabled').append(iface_to_add)
+        bridge_state = iface_under_test.read_from_sys('brport/bridge/bridge/stp_state')
+        if bridge_state == '0':
+            stp_hash.get('stp_disabled').append(iface_to_add)
+            return
+        else:
+            stp_hash.get('disabled').append(iface_to_add)
     elif iface_stp_state == '1' or iface_stp_state == '2':
         stp_hash.get('intransition').append(iface_to_add)
     elif iface_stp_state == '3':
@@ -118,7 +123,8 @@ class KernelStpBridgeMember(object):
             'blocking': [],
             'forwarding': [],
             'root': [],
-            'intransition': []
+            'intransition': [],
+            'stp_disabled': []
         }
 
     @property
