@@ -101,6 +101,18 @@ class TestKernelStpBridgeMem(object):
             'intransition': []
         })
 
+
+class TestKernelStpBridge(object):
+    def setup(self):
+        br0 = linux_bridge.Bridge('br0')
+        self.stp = linux_bridge.KernelStpBridge(br0)
+
+    @mock.patch('netshowlib.linux.common.read_file_oneline')
+    def test_get_root_priority(self, mock_read_oneline):
+        mock_read_oneline.return_value = '8000.112233445566'
+        assert_equals(self.stp.root_priority, '32768')
+
+
 class TestLinuxBridgeMember(object):
     """ Linux Bridgemember tests"""
 
@@ -111,6 +123,7 @@ class TestLinuxBridgeMember(object):
     def test_attributes(self):
         assert_equals(isinstance(self.iface.stp,
                                  linux_bridge.KernelStpBridgeMember), True)
+
 
 class TestLinuxBridge(object):
     """ Linux Bridge tests """

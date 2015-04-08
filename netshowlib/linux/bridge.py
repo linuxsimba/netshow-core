@@ -60,6 +60,8 @@ class KernelStpBridge(object):
 
     def __init__(self, bridge):
         self.bridge = bridge
+        self._root_priority = None
+        self._bridge_priority = None
         self._initialize_state()
 
     def _initialize_state(self):
@@ -71,6 +73,23 @@ class KernelStpBridge(object):
             'root': [],
             'intransition': []
         }
+
+    @property
+    def root_priority(self):
+        """
+        :return: return root priority number
+        """
+        _priority = self.bridge.read_from_sys('bridge/root_id')
+        if _priority:
+            self._root_priority = str(int(_priority.split('.')[0], 16))
+        return self._root_priority
+
+    @property
+    def bridge_priority(self):
+        """
+        :return: return bridge priority number
+        """
+        pass
 
     @property
     def member_state(self):
