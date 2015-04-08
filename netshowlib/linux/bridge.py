@@ -1,7 +1,12 @@
+# pylint: disable=R0903
 """ This module is responsible for finding properties
 related to linux bridge and bridge member interfaces """
 import netshowlib.linux.iface as linux_iface
 import os
+
+# store cache of bridge instances
+# used by KernelStpBridgeMember method.
+BRIDGE_CACHE = {}
 
 
 def update_stp_state(stp_hash, iface_to_add, iface_under_test):
@@ -23,20 +28,91 @@ def update_stp_state(stp_hash, iface_to_add, iface_under_test):
         stp_hash.get('root').append(iface_to_add)
 
 
-class BridgeMember(linux_iface.Iface):
-    """ Linux Bridge Member attributes
+# ======================================================================= #
 
-    * **state**:  stp vlan information for the port. Example:
+class KernelStpBridge(object):
+    """ Attributes for STP for a bridge
+
+    * **bridge**: instance of :class:`Bridge`
+    * **member_state**: return hash of basic stp attributes of \
+    bridge members. Example
+
     .. code-block:: python
-       >> print(iface.state)
-       >> { 'forwarding':  [list of bridges ],
-            'blocking': [ list of bridges ],
-            'root': [ list of bridges],
-            'intransition': [ list of bridges]
+
+       iface = linux.bridge.Bridge('eth2')
+       iface.stp.state
+       >> { 'forwarding': [list of bridge member instances ]
+            'blocking': [list of bridge member instances ]
+            'intransition': [ list of bridge member instances ]
+            'disabled': [list of bridge member instances]
           }
+
+    * **root_priority**: root priority for the spanning tree domain
+    * **bridge_priority**: bridge priority
+
+
     """
-    def __init__(self, name, cache=None):
-        linux_iface.Iface.__init__(self, name, cache)
+
+    def __init__(self, bridge):
+        self.bridge = bridge
+        self._initialize_state()
+
+    def _initialize_state(self):
+        """ initialize state """
+        self._member_state = {
+            'disabled': [],
+            'blocking': [],
+            'forwarding': [],
+            'root': [],
+            'intransition': []
+        }
+
+    @property
+    def member_state(self):
+        """
+        :return: dict of stp state of bridge members
+        """
+        self._initialize_state()
+        # go through tagged members first
+        for _ifacename, _iface in self.bridge.tagged_members.items():
+            subifacename = "%s.%s" % (_ifacename, self.bridge.vlan_tag)
+            subiface = linux_iface.Iface(subifacename)
+            update_stp_state(self._member_state, _iface, subiface)
+
+        for _ifacename, _iface in self.bridge.untagged_members.items():
+            update_stp_state(self._member_state, _iface, _iface)
+
+        return self._member_state
+
+# ======================================================================= #
+
+
+class KernelStpBridgeMember(object):
+    """ Attributes for Bridgemems using the Kernel STP
+
+    * **bridgemem**: instance of :class:`BridgeMember`
+    * **state**: return hash of basic stp attributes of the port. Example \
+
+    .. code-block:: python
+
+       iface = linux.bridge.BridgeMember('eth2')
+       iface.stp.state
+       >> { 'forwarding': [list of bridge instances ]
+            'blocking': [list of bridge instances ]
+            'intransition': [ list of bridge instances ]
+            'disabled': [list of bridge instances]
+          }
+
+    * **cache**: feature cache that is used
+    """
+
+    def __init__(self, bridgemem, cache=None):
+        self.bridgemem = bridgemem
+        self._cache = cache
+        self._initialize_state()
+
+    def _initialize_state(self):
+        """ initialize state """
         self._state = {
             'disabled': [],
             'blocking': [],
@@ -44,10 +120,6 @@ class BridgeMember(linux_iface.Iface):
             'root': [],
             'intransition': []
         }
-        self._cache = cache
-
-    def __str__(self):
-        return "my name is %s" % self.name
 
     @property
     def state(self):
@@ -55,24 +127,45 @@ class BridgeMember(linux_iface.Iface):
         :return: dict of stp states with associated \
             :class:`linux.bridge<Bridge>` instances
         """
-        self._state = {
-            'disabled': [],
-            'blocking': [],
-            'forwarding': [],
-            'root': [],
-            'intransition': []
-        }
+        self._initialize_state()
         # go through list of subints look for bridge members
         # understand stp config for that interface and update
         # _state dict.
-        for subintname in self.get_sub_interfaces():
+        bridgename = self.bridgemem.read_symlink('brport/bridge')
+        if bridgename:
+            if BRIDGE_CACHE.get(bridgename):
+                bridgeiface = BRIDGE_CACHE.get(bridgename)
+            else:
+                bridgeiface = Bridge(bridgename, cache=self._cache)
+            update_stp_state(self._state, bridgeiface, self.bridgemem)
+
+        for subintname in self.bridgemem.get_sub_interfaces():
             subiface = linux_iface.Iface(subintname)
             bridgename = subiface.read_symlink('brport/bridge')
-            bridgeiface = Bridge(bridgename, cache=self._cache)
-            if subiface.is_bridgemem():
+            if bridgename:
+                if BRIDGE_CACHE.get(bridgename):
+                    bridgeiface = BRIDGE_CACHE.get(bridgename)
+                else:
+                    bridgeiface = Bridge(bridgename, cache=self._cache)
                 update_stp_state(self._state, bridgeiface, subiface)
         return self._state
 
+# ======================================================================= #
+
+
+class BridgeMember(linux_iface.Iface):
+    """ Linux Bridge Member attributes
+
+    * **cache**: feature cache
+    * **stp**: pointer to :class:`KernelStpBridgeMember` instance
+
+    """
+    def __init__(self, name, cache=None):
+        linux_iface.Iface.__init__(self, name, cache)
+        self.stp = KernelStpBridgeMember(self, cache)
+
+
+# ======================================================================= #
 
 class Bridge(linux_iface.Iface):
     """ Linux Bridge interface attributes
@@ -81,12 +174,10 @@ class Bridge(linux_iface.Iface):
     * **untagged_members**: list of untagged bridge members *(access)*
     * **members**: all bridge members
     * **vlan_tag**: vlan ID tag if applicable. empty string means no tag.
-    * **member_state**:  provides stp port state summary regarding the bridge members
-    * **root_priority**: root priority for the spanning tree domain
-    * **bridge_priority**: bridge priority
-
-
+    * **stp**: pointer to :class:`KernelStpBridge` instance. If set to ``None``,
+    then bridge has STP disabled.
     """
+
     def __init__(self, name, cache=None):
         linux_iface.Iface.__init__(self, name, cache)
         self._tagged_members = {}
@@ -94,13 +185,7 @@ class Bridge(linux_iface.Iface):
         self._members = {}
         self._vlan_tag = ''
         self._cache = cache
-        self._member_state = {
-            'disabled': [],
-            'blocking': [],
-            'forwarding': [],
-            'root': [],
-            'intransition': []
-        }
+        self._stp = None
 
     # -----------------
 
@@ -139,28 +224,17 @@ class Bridge(linux_iface.Iface):
     # ---------------------------
 
     @property
-    def member_state(self):
+    def stp(self):
         """
-        :return: dict of stp state of bridge members
+        :return: ``None`` if STP is disabled
+        :return: :class:`KernelStpBridge` instance if STP is enabled
         """
-        self._member_state = {
-            'disabled': [],
-            'blocking': [],
-            'forwarding': [],
-            'root': [],
-            'intransition': []
-        }
-
-        # go through tagged members first
-        for _ifacename, _iface in self.tagged_members.items():
-            subifacename = "%s.%s" % (_ifacename, self.vlan_tag)
-            subiface = linux_iface.Iface(subifacename)
-            update_stp_state(self._member_state, _iface, subiface)
-
-        for _ifacename, _iface in self.untagged_members.items():
-            update_stp_state(self._member_state, _iface, _iface)
-
-        return self._member_state
+        if self.read_from_sys('bridge/stp_state') == '0':
+            return None
+        else:
+            if not self._stp:
+                self._stp = KernelStpBridge(self)
+            return self._stp
 
     @property
     def members(self):
