@@ -111,6 +111,15 @@ class TestKernelStpBridge(object):
     def test_get_root_priority(self, mock_read_oneline):
         mock_read_oneline.return_value = '8000.112233445566'
         assert_equals(self.stp.root_priority, '32768')
+        mock_read_oneline.assert_called_with(
+            '/sys/class/net/br0/bridge/root_id')
+
+    @mock.patch('netshowlib.linux.common.read_file_oneline')
+    def test_get_bridge_priority(self, mock_read_oneline):
+        mock_read_oneline.return_value = '4000.112233445566'
+        assert_equals(self.stp.root_priority, '16384')
+        mock_read_oneline.assert_called_with(
+            '/sys/class/net/br0/bridge/root_id')
 
 
 class TestLinuxBridgeMember(object):
