@@ -13,6 +13,7 @@ from asserts import assert_equals, mod_args_generator
 from nose.tools import set_trace
 from mock import MagicMock
 
+
 class TestKernelStpBridgeMem(object):
     """ Kernel stp bridgemember class tests"""
     def setup(self):
@@ -96,7 +97,7 @@ class TestKernelStpBridgeMem(object):
             'disabled': [br11],
             'blocking': [],
             'forwarding': [br10],
-            'root': [br10, br11],
+            'root': [br10],
             'stp_disabled': [br30],
             'intransition': []
         })
@@ -120,6 +121,84 @@ class TestKernelStpBridge(object):
         assert_equals(self.stp.root_priority, '16384')
         mock_read_oneline.assert_called_with(
             '/sys/class/net/br0/bridge/root_id')
+
+    @mock.patch('netshowlib.linux.bridge.os.listdir')
+    @mock.patch('netshowlib.linux.common.read_file_oneline')
+    @mock.patch('netshowlib.linux.iface.os.path.exists')
+    def test_member_state(self, mock_os_path,
+                          mock_oneline, mock_listdir):
+        # bridge has only untagged ports
+        mock_listdir.return_value = ['eth1', 'eth2']
+        values = {
+            '/sys/class/net/eth1/brport': True,
+            '/sys/class/net/eth2/brport': True,
+        }
+        values2 = {
+            '/sys/class/net/eth1/brport/state': '3',
+            '/sys/class/net/eth1/brport/designated_root': 'aaa',
+            '/sys/class/net/eth1/brport/designated_bridge': 'aaa',
+            '/sys/class/net/eth2/brport/state': '0',
+            '/sys/class/net/eth2/brport/bridge/bridge/stp_state': '1',
+            '/sys/class/net/eth2/brport/designated_root': 'aaa',
+            '/sys/class/net/eth2/brport/designated_bridge': 'aaa',
+        }
+
+        mock_os_path.side_effect = mod_args_generator(values)
+        mock_oneline.side_effect = mod_args_generator(values2)
+        eth1 = self.stp.bridge.members.get('eth1')
+        eth2 = self.stp.bridge.members.get('eth2')
+        assert_equals(self.stp.member_state, {
+            'disabled': [eth2],
+            'blocking': [],
+            'forwarding': [eth1],
+            'root': [eth1],
+            'intransition': []
+        })
+
+"""
+        values = {
+            '/sys/class/net/eth1/brport': True,
+            '/sys/class/net/eth1.11/brport': True,
+            '/sys/class/net/eth1.20/brport': False,
+            '/sys/class/net/eth1.30/brport': True,
+        }
+        values2 = {
+            '/sys/class/net/eth1/brport/state': '3',
+            '/sys/class/net/eth1/brport/designated_root': 'aaa',
+            '/sys/class/net/eth1/brport/designated_bridge': 'aaa',
+            '/sys/class/net/eth1.11/brport/state': '0',
+            '/sys/class/net/eth1.11/brport/bridge/bridge/stp_state': '1',
+            '/sys/class/net/eth1.11/brport/designated_root': 'aaa',
+            '/sys/class/net/eth1.11/brport/designated_bridge': 'aaa',
+            '/sys/class/net/eth1.30/brport/state': '0',
+            '/sys/class/net/eth1.30/brport/bridge/bridge/stp_state': '0'
+
+        }
+        values3 = {
+            '/sys/class/net/eth1/brport/bridge': 'br10',
+            '/sys/class/net/eth1.11/brport/bridge': 'br11',
+            '/sys/class/net/eth1.20/brport/bridge': None,
+            '/sys/class/net/eth1.30/brport/bridge': 'br30'
+        }
+        mock_symlink.side_effect = mod_args_generator(values3)
+        mock_oneline.side_effect = mod_args_generator(values2)
+        mock_os_path.side_effect = mod_args_generator(values)
+        br10 = linux_bridge.Bridge('br10')
+        br11 = linux_bridge.Bridge('br11')
+        br30 = linux_bridge.Bridge('br30')
+        linux_bridge.BRIDGE_CACHE['br10'] = br10
+        linux_bridge.BRIDGE_CACHE['br11'] = br11
+        linux_bridge.BRIDGE_CACHE['br30'] = br30
+        assert_equals(self.stp.state, {
+            'disabled': [br11],
+            'blocking': [],
+            'forwarding': [br10],
+            'root': [br10, br11],
+            'stp_disabled': [br30],
+            'intransition': []
+        })
+
+"""
 
 
 class TestLinuxBridgeMember(object):
@@ -155,39 +234,39 @@ class TestLinuxBridge(object):
 
     @mock.patch('netshowlib.linux.bridge.os.listdir')
     def test_get_list_of_bridge_members(self, mock_listdirs):
-        bridgemems = ['swp8', 'swp9']
+        bridgemems = ['eth8', 'eth9']
         mock_listdirs.return_value = bridgemems
         assert_equals(sorted(list(self.iface.members.keys())), sorted(bridgemems))
-        assert_equals(isinstance(self.iface.members.get('swp8'),
+        assert_equals(isinstance(self.iface.members.get('eth8'),
                                  linux_bridge.BridgeMember), True)
         mock_listdirs.assert_called_with('/sys/class/net/br0/brif')
 
     @mock.patch('netshowlib.linux.bridge.os.listdir')
     def test_get_tagged_bridge_members(self, mock_listdirs):
-        bridgemems = ['swp7', 'swp8', 'swp9.100', 'swp10.100']
+        bridgemems = ['eth7', 'eth8', 'eth9.100', 'eth10.100']
         mock_listdirs.return_value = bridgemems
         assert_equals(sorted(list(self.iface.tagged_members.keys())),
-                      sorted(['swp9', 'swp10']))
+                      sorted(['eth9', 'eth10']))
 
     @mock.patch('netshowlib.linux.bridge.os.listdir')
     def test_untagged_bridge_members(self, mock_listdirs):
-        bridgemems = ['swp7', 'swp8', 'swp9.100', 'swp10.100']
+        bridgemems = ['eth7', 'eth8', 'eth9.100', 'eth10.100']
         mock_listdirs.return_value = bridgemems
         assert_equals(sorted(list(self.iface.untagged_members.keys())),
-                      sorted(['swp7', 'swp8']))
+                      sorted(['eth7', 'eth8']))
 
     @mock.patch('netshowlib.linux.bridge.os.listdir')
     def test_vlan_tag(self, mock_listdirs):
         # single tag
-        bridgemems = ['swp7', 'swp8', 'swp9.100', 'swp10.100']
+        bridgemems = ['eth7', 'eth8', 'eth9.100', 'eth10.100']
         mock_listdirs.return_value = bridgemems
         assert_equals(self.iface.vlan_tag, '100')
         # multiple tags
-        bridgemems = ['swp7', 'swp8', 'swp9.100', 'swp10.100',
-                      'swp11.10', 'swp12.3']
+        bridgemems = ['eth7', 'eth8', 'eth9.100', 'eth10.100',
+                      'eth11.10', 'eth12.3']
         mock_listdirs.return_value = bridgemems
         assert_equals(self.iface.vlan_tag, '3, 10, 100')
         # no tag
-        bridgemems = ['swp7', 'swp8']
+        bridgemems = ['eth7', 'eth8']
         mock_listdirs.return_value = bridgemems
         assert_equals(self.iface.vlan_tag, '')

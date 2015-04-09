@@ -29,7 +29,7 @@ def update_stp_state(stp_hash, iface_to_add, iface_under_test):
         stp_hash.get('blocking').append(iface_to_add)
     designated_root = iface_under_test.read_from_sys('brport/designated_root')
     designated_bridge = iface_under_test.read_from_sys('brport/designated_bridge')
-    if designated_root == designated_bridge:
+    if designated_root == designated_bridge and iface_stp_state != '0':
         stp_hash.get('root').append(iface_to_add)
 
 
@@ -230,10 +230,14 @@ class Bridge(linux_iface.Iface):
         :return: get the members of a bridge into the tagged , untagged and total \
             member names and number structures
         """
+        member_list = self._memberlist_str()
+        if set(member_list) == set(self._members.keys()):
+            return
+
         self._members = {}
         self._tagged_members = {}
         self._untagged_members = {}
-        member_list = self._memberlist_str()
+
         for _name in member_list:
             # take the name of the main physical or logical interface
             # not the subinterface
