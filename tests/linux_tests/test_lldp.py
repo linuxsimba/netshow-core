@@ -30,10 +30,10 @@ def test_cacheinfo(mock_lldp):
                    'adj_port': 'swp2',
                    'adj_mgmt_ip': '192.168.0.15'})
 
-# Test getting lldp from a single interface
-#@mock.patch('netshowlib.lldp.exec_command')
-#def test_get_lldp_info_single(self, mock_lldp):
-#    lldp_out = open('tests/lldp_output.txt').read()
-#    mock_lldp.return_value = lldp_out
-#    get_info('swp1')
-#    mock_lldp.assert_called_with('/usr/sbin/lldpctl -f xml swp1')
+
+@mock.patch('netshowlib.linux.lldp.exec_command')
+def test_get_running_exec_lldp(mock_lldp):
+    lldp_out = open('tests/linux_tests/lldp_output.txt').read()
+    mock_lldp.return_value = lldp_out
+    linux_lldp._exec_lldp()
+    mock_lldp.assert_called_with('/usr/sbin/lldpctl -f xml')
