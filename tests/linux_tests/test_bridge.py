@@ -216,6 +216,18 @@ class TestKernelStpBridge(object):
             'intransition': []
         })
 
+        # bridge does not have any members but STP is enabled
+        mock_listdir.return_value = []
+        mock_os_path.side_effect = {}
+        mock_oneline.side_effect = {}
+        assert_equals(self.stp.member_state, {
+            'disabled': [],
+            'blocking': [],
+            'forwarding': [],
+            'root': [],
+            'intransition': []
+        })
+
 
 class TestLinuxBridgeMember(object):
     """ Linux Bridgemember tests"""
