@@ -50,6 +50,7 @@ class KernelStpBridge(object):
             'blocking': [list of bridge member instances ]
             'intransition': [ list of bridge member instances ]
             'disabled': [list of bridge member instances]
+            'root': [list of bridge member instances. should only be one]
           }
 
     * **root_priority**: root priority for the spanning tree domain
@@ -125,6 +126,8 @@ class KernelStpBridgeMember(object):
             'blocking': [list of bridge instances ]
             'intransition': [ list of bridge instances ]
             'disabled': [list of bridge instances]
+            'root': [list of bridges instances with root ports ]
+            'stp_disabled': [ list of bridge instances where stp is disabled]
           }
 
     * **cache**: feature cache that is used
