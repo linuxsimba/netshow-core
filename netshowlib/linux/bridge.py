@@ -27,9 +27,9 @@ def update_stp_state(stp_hash, iface_to_add, iface_under_test):
         stp_hash.get('forwarding').append(iface_to_add)
     elif iface_stp_state == '4':
         stp_hash.get('blocking').append(iface_to_add)
-    designated_root = iface_under_test.read_from_sys('brport/designated_root')
-    designated_bridge = iface_under_test.read_from_sys('brport/designated_bridge')
-    if designated_root == designated_bridge and iface_stp_state != '0':
+    root_port_id = iface_under_test.read_from_sys('brport/bridge/bridge/root_port')
+    port_id = iface_under_test.read_from_sys('brport/port_id')
+    if root_port_id == port_id and iface_stp_state != '0':
         stp_hash.get('root').append(iface_to_add)
 
 
@@ -208,6 +208,7 @@ class Bridge(linux_iface.Iface):
         self._tagged_members = {}
         self._untagged_members = {}
         self._members = {}
+        self._memberlist = {}
         self._vlan_tag = ''
         self._cache = cache
         self._stp = None
@@ -230,15 +231,17 @@ class Bridge(linux_iface.Iface):
         :return: get the members of a bridge into the tagged , untagged and total \
             member names and number structures
         """
-        member_list = self._memberlist_str()
-        if set(member_list) == set(self._members.keys()):
+        member_list_from_kernel = self._memberlist_str()
+        if set(member_list_from_kernel) == set(self._memberlist):
             return
+
+        self._memberlist = member_list_from_kernel
 
         self._members = {}
         self._tagged_members = {}
         self._untagged_members = {}
 
-        for _name in member_list:
+        for _name in self._memberlist:
             # take the name of the main physical or logical interface
             # not the subinterface
             membername_arr = _name.split('.')
