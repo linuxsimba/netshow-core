@@ -6,11 +6,11 @@ collecting various information about a linux interface.
 import netshowlib.netshowlib as nn
 import netshowlib.linux.common as common
 import netshowlib.linux.ipaddr as ipaddr
+import netshowlib.linux.lldp as lldp
 import os
 import glob
 import re
 from datetime import datetime
-import netshowlib.linux.stp.kernel as kernel_stp
 
 """
 Variables for port type bitmap entry
@@ -83,7 +83,7 @@ class Iface(object):
         self._feature_cache = cache
         self._ipaddr = ipaddr.Ipaddr(name, cache)
         self._ip_addr_assign = None
-
+        self._cache = cache
 
 # ----------------------
 # Class methods
@@ -374,6 +374,20 @@ class Iface(object):
             else:
                 self._linkstate = 0
         return self._linkstate
+
+    @property
+    def lldp(self):
+        """
+        gets LLDP information from cache or system, depending \
+        if cache is provided. Example
+
+        .. code-block:: python
+
+        here is my example TODO
+
+        :return: array of hash entries that contain lldp information
+        """
+        return lldp.interface(self.name, self._cache)
 
     @property
     def ipaddr(self):
