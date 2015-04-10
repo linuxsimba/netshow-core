@@ -1,5 +1,6 @@
 Linux Bridge
-===========
+=================
+
 .. inheritance-diagram:: netshowlib.linux.bridge
   :parts: 3
 

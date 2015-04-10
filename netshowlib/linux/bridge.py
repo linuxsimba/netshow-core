@@ -115,7 +115,7 @@ class KernelStpBridgeMember(object):
     """ Attributes for Bridgemems using the Kernel STP
 
     * **bridgemem**: instance of :class:`BridgeMember`
-    * **state**: return hash of basic stp attributes of the port. Example \
+    * **state**: return hash of basic stp attributes of the port. Example
 
     .. code-block:: python
 
@@ -199,7 +199,7 @@ class Bridge(linux_iface.Iface):
     * **untagged_members**: list of untagged bridge members *(access)*
     * **members**: all bridge members
     * **vlan_tag**: vlan ID tag if applicable. empty string means no tag.
-    * **stp**: pointer to :class:`KernelStpBridge` instance. If set to ``None``,
+    * **stp**: pointer to :class:`KernelStpBridge` instance. If set to ``None``, \
     then bridge has STP disabled.
     """
 
@@ -299,8 +299,7 @@ class Bridge(linux_iface.Iface):
     @property
     def vlan_tag(self):
         """
-        | For the vlan-aware bridge driver, a vlan tag is not applicable
-        | For the classic/default bridge driver, if a tagged bridge member \
+        For the classic/default bridge driver, if a tagged bridge member \
         is provided then the function will use the tag as the vlan id
 
         :return: vlan ID if applicable. If multiple tags found, possibly indicating \
