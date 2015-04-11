@@ -26,7 +26,7 @@ def test_cacheinfo(mock_lldp):
     assert_equals(len(lldp_hash.get('eth1')), 2)
     # confirm contents of lldp entry
     assert_equals(lldp_hash.get('eth2')[0],
-                  {'adj_switchname': 'right',
+                  {'adj_hostname': 'right',
                    'adj_port': 'swp2',
                    'adj_mgmt_ip': '192.168.0.15'})
 

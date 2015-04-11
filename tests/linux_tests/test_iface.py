@@ -9,7 +9,6 @@ import netshowlib.linux.iface as linux_iface
 import netshowlib.linux.bridge as linux_bridge
 import netshowlib.linux.bond as linux_bond
 import netshowlib.linux.cache as linux_cache
-import netshowlib.linux.lldp as linux_lldp
 import xml.etree.ElementTree as ET
 import mock
 from asserts import assert_equals, mod_args_generator, \
