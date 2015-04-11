@@ -9,6 +9,8 @@ import netshowlib.linux.iface as linux_iface
 import netshowlib.linux.bridge as linux_bridge
 import netshowlib.linux.bond as linux_bond
 import netshowlib.linux.cache as linux_cache
+import netshowlib.linux.lldp as linux_lldp
+import xml.etree.ElementTree as ET
 import mock
 from asserts import assert_equals, mod_args_generator, \
     mock_open_str, touch
@@ -53,6 +55,16 @@ class TestLinuxIface(object):
     def setup(self):
         """ setup function """
         self.iface = linux_iface.Iface('eth1')
+
+    @mock.patch('netshowlib.linux.lldp._exec_lldp')
+    def test_lldp(self, mock_lldp):
+        lldp_out = open('tests/linux_tests/lldp_output.txt').read()
+        mock_lldp.return_value = ET.fromstring(lldp_out)
+        lldp_output = self.iface.lldp
+        # confirm correct number of lldp enabled ports
+        assert_equals(len(lldp_output), 2)
+        assert_equals(lldp_output[0].get('adj_hostname'), 'right')
+
 
     @mock.patch('netshowlib.linux.iface.common.os.readlink')
     def test_read_symlink(self, mock_readlink):
