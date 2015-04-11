@@ -1,3 +1,4 @@
+.tox/
 Session.vim
 *._pycache_/
 MANIFEST
