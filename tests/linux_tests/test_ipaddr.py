@@ -24,7 +24,7 @@ class TestLinuxIpaddr(object):
         self.ipaddr = ipaddr_mod.Ipaddr('eth1')
         self.ipaddr.ipv4 = ['10.1.1.1/24']
         self.ipaddr.ipv6 = ['10:1:1::1/64']
-        assert_equals(self.ipaddr.ips, ['10.1.1.1/24', '10:1:1::1/64'])
+        assert_equals(self.ipaddr.all_ips, ['10.1.1.1/24', '10:1:1::1/64'])
 
     @mock.patch('netshowlib.linux.ipaddr.parse_ip_cache')
     def test_cacheinfo(self, mock_parse):

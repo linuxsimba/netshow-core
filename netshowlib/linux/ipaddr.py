@@ -81,7 +81,7 @@ class Ipaddr(object):
         self.cache = cache
 
     @property
-    def ips(self):
+    def all_ips(self):
         """
         :return: list of all IPs found both ipv6 and ipv4
         """
