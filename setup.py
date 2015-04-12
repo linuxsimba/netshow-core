@@ -11,8 +11,7 @@ setup(
     description="Python Library to Abstract Linux Networking Data",
     author='Stanley Karunditu',
     author_email='stanleyk@linuxsimba.com',
-    package_dir={'': 'netshowlib'},
-    packages=find_packages('netshowlib'),
+    packages=find_packages(),
     zip_safe=False,
     license='GPLv2',
     classifiers=[
