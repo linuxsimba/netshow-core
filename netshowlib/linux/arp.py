@@ -12,6 +12,7 @@ class Arp(object):
     good explanation of ARP timer
 
     * **name**: name of interface
+    * **cache**: pointer to :class:`netshowlib.linux.cache.Cache` instance
     * **ipv4**: ipv4 arp entries
     * **ipv6**: ipv6 arp entries
     * **timer**: arp timer
@@ -21,7 +22,8 @@ class Arp(object):
     * **arp_announce**: ARP announce setting.
     * **arp_accept**: ARP accept setting.
     """
-    def __init__(self, name):
+    def __init__(self, name, cache=None):
+        self._cache = cache
         self._ipv4 = None
         self._ipv6 = None
         self._timer = None
