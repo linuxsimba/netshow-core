@@ -7,7 +7,7 @@ import netshowlib.netshowlib as nn
 import netshowlib.linux.common as common
 import netshowlib.linux.ipaddr as ipaddr
 import netshowlib.linux.lldp as lldp
-import netshowlib.linux.arp as arp
+import netshowlib.linux.ip_neighbor as ip_neighbor
 import os
 import glob
 import re
@@ -70,8 +70,8 @@ class Iface(object):
     * **ipaddr**: pointer to  \
         :class:`linux.ipaddr<netshowlib.linux.ipaddr.Ipaddr>` \
         class instance
-    * **arp**: pointer to \
-        :class:`linux.arp<netshowlib.linux.arp.Arp>` class instance
+    * **ip_neighbor**: pointer to \
+        :class:`linux.ip_neighbor<netshowlib.linux.ip_neighbor.IpNeighbor>` class instance
     """
     def __init__(self, name, cache=None):
         self._mac = None
@@ -84,7 +84,7 @@ class Iface(object):
         self._port_type = 0
         self._feature_cache = cache
         self._ipaddr = ipaddr.Ipaddr(name, cache)
-        self._arp = arp.Arp(name, cache)
+        self._ip_neighbor = ip_neighbor.IpNeighbor(name, cache)
         self._ip_addr_assign = None
         self._cache = cache
 
@@ -405,15 +405,16 @@ class Iface(object):
         return self._ipaddr
 
     @property
-    def arp(self):
+    def ip_neighbor(self):
         """
-        get list of ARP entries from cache or from system  \
+        get list of IP neighbor entries from cache or from system  \
         associated with this interface
 
-        :return:  :class:`linux.arp instance<netshowlib.linux.arp.Arp>`
+        :return:  :class:`linux.ip_neighbor instance
+        <netshowlib.linux.ip_neighbor.IpNeighbor>`
         """
-        self._arp.run()
-        return self._arp
+        self._ip_neighbor.run()
+        return self._ip_neighbor
 
     @property
     def ip_addr_assign(self):

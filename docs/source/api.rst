@@ -24,7 +24,8 @@ Linux OS Modules
   linux/bridge.rst
   linux/bond.rst
   linux/lacp.rst
+  linux/lldp.rst
   linux/ipaddr.rst
-
+  linux/ipneighbor.rst
 
 

@@ -66,10 +66,12 @@ def cacheinfo():
 
 class Ipaddr(object):
     """ Ipaddr class attributes
+
     * **ipv4**: list of IPv4 addresses in CIDR format
     * **ipv6**: list of IPv6 addresses in CIDR format
     * **cache**: cache of all IP addresses
     * **all_ips**: Concatenation of ipv4 and ipv6 addresses
+
     """
 
     def __init__(self, name, cache=None):

@@ -1,5 +1,5 @@
-Linux Ipaddr module
-====================
+Linux IP Address module
+========================
 
 .. automodule:: netshowlib.linux.ipaddr
    :members:
