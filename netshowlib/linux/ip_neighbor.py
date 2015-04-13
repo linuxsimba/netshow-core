@@ -1,7 +1,16 @@
 """ Linux ip neighbor module.
+
 IP neighbor relationships in IPv4 are handled by Address Resolution Protocol
 In IPv6 this process is just known as IP neighbor discovery.
+
 """
+
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
+import netshowlib.linux.common as common
+
 
 """
 'ipv4': ('00:00:11:11:22:22', '10.1.1.1'),
@@ -12,17 +21,50 @@ In IPv6 this process is just known as IP neighbor discovery.
 """
 def cacheinfo():
     """
-    Example:
-
-    .. code-block:: python
-       >>   linux.arp.cacheinfo()
-       >>> { 'eth1': linux.arp.Instance
-             'eth2': linux.arp.Instance
-           }
-
-    :return arp ipv6 and ipv6 info via ip neighbor show
+    :return hash of of :class:`IpNeighbor` info by parsing ``ip neighbor show`` output.
     """
-    pass
+    # return empty ip neighbor dict
+    ip_dict = {}
+    _parse_ip_info(command='/sbin/ip -4 neighbor show',
+                   iptype='ipv4',
+                   ip_neigh_dict=ip_dict)
+    _parse_ip_info(command='/sbin/ip -6 neighbor show',
+                   iptype='ipv6',
+                   ip_neigh_dict=ip_dict)
+
+    return ip_dict
+
+def _parse_ip_info(command, iptype, ip_neigh_dict):
+    """
+    parse ip neighbor information from either ipv4 or ipv6
+
+    :params command: can be ``ip neigh show`` or ``ip -6 neigh show``
+    :params iptype: can be ``ipv4`` or ``ipv6``
+    :params ip_neigh_dict: dict to update neighbor table
+    """
+    try:
+        neighbor_table = common.exec_command(command)
+    except:
+        return
+
+    fileio = StringIO(neighbor_table)
+    for line in fileio:
+        if len(line.strip()) <= 0:
+            continue
+        ip_neigh_arr = line.split()
+        if ip_neigh_arr[-1] == 'REACHABLE':
+            _ip = ip_neigh_arr[0]
+            ifacename = ip_neigh_arr[2]
+            _mac = ip_neigh_arr[4]
+            try:
+                _instance = ip_neigh_dict[ifacename]
+            except KeyError:
+                _instance = IpNeighbor(ifacename)
+                ip_neigh_dict[ifacename] = _instance
+
+            _instance.__dict__[iptype][_ip] = {'mac': _mac}
+
+
 
 class IpNeighbor(object):
     """ Linux IP neighbor attributes
@@ -45,8 +87,8 @@ class IpNeighbor(object):
     """
     def __init__(self, name, cache=None):
         self._cache = cache
-        self._ipv4 = None
-        self._ipv6 = None
+        self.ipv4 = {}
+        self.ipv6 = {}
         self._timer = None
         self._arp_filter = None
         self.name = name
@@ -55,15 +97,7 @@ class IpNeighbor(object):
         pass
 
     @property
-    def all_arps(self):
-        pass
-
-    @property
-    def ipv4(self):
-        pass
-
-    @property
-    def ipv6(self):
+    def all_neighbors(self):
         pass
 
     @property
