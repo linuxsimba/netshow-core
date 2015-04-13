@@ -78,12 +78,6 @@ class IpNeighbor(object):
     * **cache**: pointer to :class:`netshowlib.linux.cache.Cache` instance
     * **ipv4**: ipv4 neighbor entries
     * **ipv6**: ipv6 neighbor entries
-    * **timer**: arp timer
-    * **arp_filter**: ARP filter setting.
-    * **arp_ignore**: ARP ignore setting.
-    * **arp_notify**: ARP notify setting.
-    * **arp_announce**: ARP announce setting.
-    * **arp_accept**: ARP accept setting.
     """
     def __init__(self, name, cache=None):
         self._cache = cache
@@ -100,10 +94,3 @@ class IpNeighbor(object):
     def all_neighbors(self):
         pass
 
-    @property
-    def timer(self):
-        pass
-
-    @property
-    def arp_filter(self):
-        pass

@@ -29,23 +29,7 @@ def test_cacheinfo(mock_arp_exec):
     assert_equals(len(result.get('vlan1').ipv6), 4)
 
 
-"""
-# parse single arp entry.
-def test_parse_arp_entry():
-    arp_dict = {}
-    _line = '10:100:1::1 dev vlan1 lladdr 00:02:00:00:00:0a router REACHABLE'
-    parse_arp_entry(_line, arp_dict)
-    assert_equals(arp_dict['vlan1'].arp,
-                  {'10:100:1::1': '00:02:00:00:00:0a'})
+class TestIpNeighbor(object):
 
-
-# correctly parse arp table if only has single table
-@mock.patch('netshowlib.arp.exec_command')
-def test_parse_arp_table(mock_arp_exec):
-    mock_arp_exec.return_value = \
-        '10:100:1::1 dev vlan1 lladdr 00:02:00:00:00:0a router REACHABLE'
-    result = parse_arp_table()
-    assert_equals(list(result.keys()), ['vlan1'])
-    assert_equals(result['vlan1'].arp, {'10:100:1::1': '00:02:00:00:00:0a'})
-
-"""
+    def setup(self):
+        self.ipneigh = ip_neighbor('eth2')
