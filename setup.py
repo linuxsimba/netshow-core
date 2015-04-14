@@ -7,10 +7,10 @@ from setuptools import setup, find_packages
 setup(
     name='linux-netshow-lib',
     version=get_version(),
-    url="http://github.com/skamithi/linux-netshow-lib",
+    url="http://github.com/CumulusNetworks/netshow-lib",
     description="Python Library to Abstract Linux Networking Data",
-    author='Stanley Karunditu',
-    author_email='stanleyk@linuxsimba.com',
+    author='Cumulus Networks',
+    author_email='ce-ceng@cumulusnetworks.com',
     packages=find_packages(),
     zip_safe=False,
     license='GPLv2',
@@ -19,5 +19,6 @@ setup(
         'Intended Audience :: Developers',
         'Intended Audience :: System Administrators',
         'Operating System :: POSIX :: Linux'
-    ]
+    ],
+    data_files=[('lib/linux.discover', 'var/lib/netshow/linux.discover')]
 )

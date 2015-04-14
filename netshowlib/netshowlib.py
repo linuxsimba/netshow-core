@@ -7,6 +7,7 @@ import os
 import glob
 import operator
 import re
+import sys
 
 
 def import_module(name):
@@ -39,7 +40,7 @@ def os_check():
     # get dirname to this file. most likely absolute
     _dirname = os.path.dirname(__file__)
     # get a list of files under the os_discovery path
-    _dir_entries = glob.glob("%s/os_discovery/[a-z]*.py" % _dirname)
+    _dir_entries = glob.glob(sys.prefix + "var/lib/netshow/*.discover")
     _os_types = {}
     # run os discovery check returns hash entries that look like this
     # { 'linux': 0 }. the integer is a priority . The lower the priority
