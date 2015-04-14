@@ -14,7 +14,6 @@
 # pylint: disable=W0611
 from asserts import assert_equals, mod_args_generator
 import netshowlib.netshowlib as nn
-import netshowlib.cache
 from nose.tools import set_trace
 import mock
 from mock import MagicMock
@@ -88,7 +87,7 @@ def test_iface_discovery(mock_import, mock_os_check):
     values = {'netshowlib.debian.iface': mock_debian_iface,
               'netshowlib.debian.cache': mock_debian_cache}
     mock_import.side_effect = mod_args_generator(values)
-    all_cache = netshowlib.cache.cache()
+    all_cache = nn.cache()
     assert_equals(nn.iface('eth1', cache=all_cache),
                   'its a debian bridge')
     # confirm syntax for iface_type accepts cache

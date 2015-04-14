@@ -19,16 +19,16 @@ The netshow-lib directory structure looks like what is shown below
   │   │   ├── common.py
   │   │   ├── bond.py
   │   │   ├── bridge.py
-  │   │   ├── counters.py
+  │   │   ├── os_discovery.py
   │   │   ├── lldp.py
   │   │   ├── lacp.py
   │   │   ├── iface.py
   │   │  
-  │   ├── bsd
+  │   ├── debian
   │   │   ├── common.py
   │   │   ├── bond.py
   │   │   ├── bridge.py
-  │   │   ├── counters.py
+  │   │   ├── os_discovery.py
   │   │   ├── lldp.py
   │   │   ├── lacp.py
   │   │   ├── iface.py

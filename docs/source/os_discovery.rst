@@ -10,54 +10,13 @@ Gentoo OS type is  a child of the Linux OS type.  OS
 discovery is managed by the :meth:`netshowlib.os_check()<netshowlib.netshowlib.os_check>` method.
 
 
-It probes the ``netshowlib/os_discovery/`` that
-each have a ``check()`` function in it. The :meth:`netshowlib.os_check()<netshowlib.netshowlib.os_check>` method
-goes through all the viable OS types defined in the
-``netshowlib/os_discovery`` directory to determine the best match.
+It probes the ``$sys.prefix + 'var/lib/netshow/*.discover`` for a list of
+supported OS types.  Then it calls
+``netshowlib.<os_type>.os_discovery`` and looks for the  ``name_and_priority()``
+function, which returns a os type name and priority. For example ``{'Linux':
+'0'}``
+
+The OS discovery code picks the os type with the highest priority.
 
 
-.. note:: By default the linux discovery checker ``netshowlib/os_discovery/linux.py`` is provided
-
-
-For example, if the ``netshowlib/os_discovery`` directory contains the
-following:
-
-.. code-block:: shell
-
-  netshowlib/os_discovery
-  ├── debian.py
-  ├── freebsd.py
-  ├── __init__.py
-  └── linux.py
-
-When you run
-
-.. code-block:: python
-
-  import netshowlib
-  netshowlib.netshowlib.os_check()
-  >> 'debian'
-
-It will call ``name_and_priority()`` function in each of the os_discovery files.
-
-It will return a hash like so
-
-.. code-block:: python
-
-   {
-     {   'linux': 0 },
-     { 'debian': 1 }
-   }
-
-``os_check`` will then take the hash value with the *maximum value*
-and return the os name as the prefered OS for this system.
-
-So in this case, ``debian`` is the prefered OS.
-
-The priorities for each OS type is statically assigned in the ``os_discovery``
-files.
-
-
-
-
-
+.. note:: By default the core netshow module supports the 'linux' os type.

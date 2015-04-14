@@ -23,14 +23,14 @@ The library is useful in Linux systems with lots of interfaces like hypervisors
 and switches
 
 Below is a simple example.
-Get LLDP information for an interface. Using ``Iface()`` activates OS discovery.
+Get LLDP information for an interface. Using ``iface()`` activates OS discovery.
 
 ::
 
   from netshowlib import netshowlib
 
   # Create iface object
-  iface = netshowlib.Iface('swp10')
+  iface = netshowlib.iface('eth1')
 
   print (netshowlib.os_check())
   >> 'linux'
@@ -39,7 +39,7 @@ Get LLDP information for an interface. Using ``Iface()`` activates OS discovery.
   print(iface.lldp)
   >> [something]
 
-Use OS specific interface. No OS discovery
+Using an OS specific interface. No OS discovery
 
 ::
 

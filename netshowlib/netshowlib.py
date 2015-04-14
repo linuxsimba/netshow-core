@@ -37,8 +37,6 @@ def os_check():
     :return: OS name of best match.
     """
 
-    # get dirname to this file. most likely absolute
-    _dirname = os.path.dirname(__file__)
     # get a list of files under the os_discovery path
     _dir_entries = glob.glob(sys.prefix + "var/lib/netshow/*.discover")
     _os_types = {}
@@ -46,10 +44,10 @@ def os_check():
     # { 'linux': 0 }. the integer is a priority . The lower the priority
     # the less likely the os is a match
     for _entry in _dir_entries:
-        _entry_without_py = re.sub(r'\.py$', '', _entry)
+        _entry_without_discover = re.sub(r'\.discover$', '', _entry)
         import_str = \
-            "netshowlib.os_discovery.%s" % \
-            os.path.basename(_entry_without_py)
+            "netshowlib.%s.os_discovery" % \
+            os.path.basename(_entry_without_discover)
         os_type = import_module(import_str)
         result = os_type.name_and_priority()
         if result:
@@ -59,6 +57,19 @@ def os_check():
         return max(_os_types.items(), key=operator.itemgetter(1))[0].lower()
     # if no OS found, return none
     return None
+
+
+def feature_cache():
+    """
+    Performs OS discovery and returns the OS appropriate Cache() module
+    """
+    os_type = os_check()
+    if os_type:
+        cache_path = "netshowlib.%s.cache" % os_type
+        cache_module = import_module(cache_path)
+        return cache_module.Cache()
+    return None
+
 
 def iface(name, os_type=None, cache=None):
     """
@@ -72,5 +83,5 @@ def iface(name, os_type=None, cache=None):
     if not _ostype:
         _ostype = os_check()
 
-    import_str = 'netshowlib.%s.iface' %  _ostype
+    import_str = 'netshowlib.%s.iface' % _ostype
     return import_module(import_str).iface_type(name, cache=cache)

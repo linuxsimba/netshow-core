@@ -2,4 +2,4 @@
 Credits
 ********
 
-Maintainer: Stanley Karunditu (stanley at linuxsimba dot com)
+Maintainer: Stanley Karunditu (`@skamithi<http://github.com/skamithi/`_)
