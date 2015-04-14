@@ -16,7 +16,7 @@ if hasattr(sys, 'real_prefix'):
     VAR_PATH = os.path.abspath(os.path.join(sys.prefix, 'var'))
 
 DATA_DIR = os.path.join(USR_SHARE_PATH, 'lib', 'netshow-lib')
-VAR_DIR = os.path.join(VAR_PATH, 'lib', 'netshow-lib')
+VAR_DIR = os.path.join(VAR_PATH, 'lib', 'netshow-lib', 'discovery')
 
 from setuptools import setup, find_packages
 setup(
@@ -36,5 +36,5 @@ setup(
         'Operating System :: POSIX :: Linux'
     ],
     # TODO: run setup.py cmdclass function to generate this instead
-    data_files=[(VAR_DIR, ['data/linux.discover'])]
+    data_files=[(VAR_DIR, ['data/discovery/linux'])]
 )
