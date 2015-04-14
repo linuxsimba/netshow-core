@@ -1,8 +1,23 @@
 # pylint: disable=c0111
 
 from netshowlib import get_version
-import ez_setup
-ez_setup.use_setuptools()
+import os
+import sys
+try:
+    import ez_setup
+    ez_setup.use_setuptools()
+except ImportError:
+    pass
+
+USR_SHARE_PATH = '/usr/share'
+VAR_PATH = '/var'
+if hasattr(sys, 'real_prefix'):
+    USR_SHARE_PATH = os.path.abspath(os.path.join(sys.prefix, 'share'))
+    VAR_PATH = os.path.abspath(os.path.join(sys.prefix, 'var'))
+
+DATA_DIR = os.path.join(USR_SHARE_PATH, 'lib', 'netshow-lib')
+VAR_DIR = os.path.join(VAR_PATH, 'lib', 'netshow-lib')
+
 from setuptools import setup, find_packages
 setup(
     name='linux-netshow-lib',
@@ -20,5 +35,6 @@ setup(
         'Intended Audience :: System Administrators',
         'Operating System :: POSIX :: Linux'
     ],
-    data_files=[('lib/linux.discover', 'var/lib/netshow/linux.discover')]
+    # TODO: run setup.py cmdclass function to generate this instead
+    data_files=[(VAR_DIR, ['data/linux.discover'])]
 )

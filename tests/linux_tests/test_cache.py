@@ -28,7 +28,7 @@ class TestLinuxCache(object):
     def test_feature_list(self):
         assert_equals(self.cache.feature_list, ['stp', 'lldp', 'ipaddr'])
 
-    @mock.patch('netshowlib.cache.nnlib.import_module')
+    @mock.patch('netshowlib.netshowlib.import_module')
     def test_cache_feature_runs(self, mock_import):
         # test if features=None
         self.cache.run()

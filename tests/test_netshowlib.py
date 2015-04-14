@@ -17,7 +17,6 @@ import netshowlib.netshowlib as nn
 from nose.tools import set_trace
 import mock
 from mock import MagicMock
-import os
 
 
 def test_import_module():
@@ -33,20 +32,11 @@ def test_os_check(mock_import,
                   mock_glob,
                   mock_os_dirname):
     """ test os discovery """
-    # test that dirname used is correct
-    _loc = __file__ + '../../../netshowlib/netshowlib.py'
-    _abspath = os.path.abspath(_loc)
-    # delete compiled pyc file
-    if os.path.exists(_abspath + 'c'):
-        os.unlink(_abspath + 'c')
-    nn.os_check()
-    mock_os_dirname.assert_called_with(_abspath)
-
     # return a directory with 3 OS types, each will return different priorities
     # choose the one with the highest priority
-    mock_glob.return_value = ['something/linux.py',
-                              'something/debian.py',
-                              'something/debian.py']
+    mock_glob.return_value = ['something/linux.discover',
+                              'something/debian.discover',
+                              'something/debian.discover']
     mock_linux = MagicMock()
     mock_linux.name_and_priority.return_value = {'Linux': 0}
     mock_debian = MagicMock()
@@ -55,9 +45,9 @@ def test_os_check(mock_import,
     mock_debian.name_and_priority.return_value = {'Ubuntu': 2}
     mock_os_dirname.return_value = 'netshowlib'
     values = {
-        'netshowlib.os_discovery.linux': mock_linux,
-        'netshowlib.os_discovery.debian': mock_debian,
-        'netshowlib.os_discovery.debian': mock_debian
+        'netshowlib.linux.os_discovery': mock_linux,
+        'netshowlib.debian.os_discovery': mock_debian,
+        'netshowlib.ubuntu.os_discovery': mock_debian
     }
     mock_import.side_effect = mod_args_generator(values)
     assert_equals(nn.os_check(), 'ubuntu')
@@ -87,7 +77,7 @@ def test_iface_discovery(mock_import, mock_os_check):
     values = {'netshowlib.debian.iface': mock_debian_iface,
               'netshowlib.debian.cache': mock_debian_cache}
     mock_import.side_effect = mod_args_generator(values)
-    all_cache = nn.cache()
+    all_cache = nn.feature_cache()
     assert_equals(nn.iface('eth1', cache=all_cache),
                   'its a debian bridge')
     # confirm syntax for iface_type accepts cache
