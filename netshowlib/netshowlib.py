@@ -6,7 +6,6 @@ This module does OS discovery , and Interface discovery
 import os
 import glob
 import operator
-import re
 import sys
 
 
@@ -38,16 +37,19 @@ def os_check():
     """
 
     # get a list of files under the os_discovery path
-    _dir_entries = glob.glob(sys.prefix + "var/lib/netshow/*.discover")
+    root_prefix = ''
+    if hasattr(sys, 'real_prefix'):
+        root_prefix = sys.prefix
+
+    _dir_entries = glob.glob(root_prefix + "/var/lib/netshow-lib/discovery/*")
     _os_types = {}
     # run os discovery check returns hash entries that look like this
     # { 'linux': 0 }. the integer is a priority . The lower the priority
     # the less likely the os is a match
     for _entry in _dir_entries:
-        _entry_without_discover = re.sub(r'\.discover$', '', _entry)
         import_str = \
             "netshowlib.%s.os_discovery" % \
-            os.path.basename(_entry_without_discover)
+            os.path.basename(_entry)
         os_type = import_module(import_str)
         result = os_type.name_and_priority()
         if result:

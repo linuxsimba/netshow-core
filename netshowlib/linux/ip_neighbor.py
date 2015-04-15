@@ -12,13 +12,6 @@ except ImportError:
 import netshowlib.linux.common as common
 
 
-"""
-'ipv4': ('00:00:11:11:22:22', '10.1.1.1'),
-                      ('00:00:33:33:44:44', '10.1.1.3'),
-             'ipv6': ('00:00:11:11:22:22', '10:1:1::1')
-             }
-            }
-"""
 def cacheinfo():
     """
     :return hash of of :class:`IpNeighbor` info by parsing ``ip neighbor show`` output.
@@ -33,6 +26,7 @@ def cacheinfo():
                    ip_neigh_dict=ip_dict)
 
     return ip_dict
+
 
 def _parse_ip_info(command, iptype, ip_neigh_dict):
     """
@@ -59,20 +53,15 @@ def _parse_ip_info(command, iptype, ip_neigh_dict):
             try:
                 _instance = ip_neigh_dict[ifacename]
             except KeyError:
-                _instance = IpNeighbor(ifacename)
+                _instance = {'ipv4': {},
+                             'ipv6': {}}
                 ip_neigh_dict[ifacename] = _instance
 
-            _instance.__dict__[iptype][_ip] = {'mac': _mac}
-
+            _instance[iptype][_ip] = {'mac': _mac}
 
 
 class IpNeighbor(object):
     """ Linux IP neighbor attributes
-    See `Cumulus Networks Article on ARP <http://bit.ly/1NocSv1>`_ \
-    for good explanation on the arp settings
-
-    See `Cumulus Networks ARP Timer <http://bit.ly/1Nod8dl>`_ for \
-    good explanation of ARP timer
 
     * **name**: name of interface
     * **cache**: pointer to :class:`netshowlib.linux.cache.Cache` instance
@@ -83,14 +72,18 @@ class IpNeighbor(object):
         self._cache = cache
         self.ipv4 = {}
         self.ipv6 = {}
-        self._timer = None
-        self._arp_filter = None
         self.name = name
 
     def run(self):
-        pass
+        """
+        collect IP neighbor entries and grab the one associated with this interface
+        """
+        if self._cache:
+            return
+
+
 
     @property
     def all_neighbors(self):
-        pass
-
+        self.run()
+        return self.ipv4 + self.ipv6
