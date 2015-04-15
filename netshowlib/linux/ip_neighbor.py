@@ -93,7 +93,7 @@ class IpNeighbor(object):
         self._all_neighbors.update(self.ipv6)
 
     @property
-    def all_neighbors(self):
+    def allentries(self):
         """
         :return: a list of all ip neighbors ipv4 + ipv6
         """
