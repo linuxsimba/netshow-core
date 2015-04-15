@@ -11,7 +11,6 @@ try:
 except ImportError:
     from io import StringIO
 import netshowlib.linux.common as common
-import netshowlib.linux.cache as feature_cache
 import re
 
 
@@ -80,7 +79,10 @@ class Ipaddr(object):
         self.ipv6 = []
         """ list of IPv6 addresses in CIDR format """
         self.name = name
-        self.cache = cache
+        if cache:
+            self._cache = cache.ipaddr
+        else:
+            self._cache = None
 
     @property
     def all_ips(self):
@@ -94,13 +96,9 @@ class Ipaddr(object):
         Run function for this feature. If cache is present, gets \
         IP info it. if, not will collect it individually
         """
-        if not self.cache:
-            self.cache = feature_cache.Cache()
-            self.cache.ipaddr = cacheinfo()
+        if not self._cache:
+            self._cache = cacheinfo()
 
-        if not self.cache.ipaddr:
-            return
-
-        ip_cache = self.cache.ipaddr.get(self.name)
+        ip_cache = self._cache.get(self.name)
         self.ipv4 = ip_cache.get('ipv4')
         self.ipv6 = ip_cache.get('ipv6')

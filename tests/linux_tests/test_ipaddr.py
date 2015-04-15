@@ -38,12 +38,18 @@ class TestLinuxIpaddr(object):
         # using feature cache
         _output = open('tests/linux_tests/ip_addr_show.txt').read()
         output = StringIO(_output)
+        mock_ip_cache.return_value = ipaddr_mod.parse_ip_cache(output)
         _feature_cache = feature_cache.Cache()
-        _feature_cache.ipaddr = ipaddr_mod.parse_ip_cache(output)
-        ipaddr = ipaddr_mod.Ipaddr('wlan0', _feature_cache)
+        ipaddr = ipaddr_mod.Ipaddr('eth0', _feature_cache)
         ipaddr.run()
         assert_equals(ipaddr.ipv4, ['192.168.0.33/24'])
         assert_equals(ipaddr.ipv6, [])
+        # without feature cache
+        ipaddr = ipaddr_mod.Ipaddr('eth0')
+        ipaddr.run()
+        assert_equals(ipaddr.ipv4, ['192.168.0.33/24'])
+        assert_equals(ipaddr.ipv6, [])
+
 
     def test_parse_ip_cache(self):
         """ testing parsing ip cache info """
@@ -69,7 +75,7 @@ class TestLinuxIpaddr(object):
                     'ipv4': [],
                     'ipv6': []
                 },
-                'wlan0': {
+                'eth0': {
                     'ipv4': ['192.168.0.33/24'],
                     'ipv6': []
                 }
