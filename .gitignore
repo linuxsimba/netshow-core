@@ -1,3 +1,5 @@
+*.egg
+*.zip
 .tox/
 Session.vim
 *._pycache_/
