@@ -14,7 +14,8 @@ class Cache(object):
         self.ipaddr = {}
         self.lldp = {}
         self.stp = {}
-        self.feature_list = ['stp', 'lldp', 'ipaddr']
+        self.feature_list = ['ip_neighbor', 'lldp', 'ipaddr']
+        self.run()
 
     def run(self, features=None):
         """

@@ -26,7 +26,7 @@ class TestLinuxCache(object):
         self.cache = linux_cache.Cache()
 
     def test_feature_list(self):
-        assert_equals(self.cache.feature_list, ['stp', 'lldp', 'ipaddr'])
+        assert_equals(self.cache.feature_list, ['ip_neighbor', 'lldp', 'ipaddr'])
 
     @mock.patch('netshowlib.netshowlib.import_module')
     def test_cache_feature_runs(self, mock_import):
@@ -34,7 +34,7 @@ class TestLinuxCache(object):
         self.cache.run()
         assert_equals(
             mock_import.call_args_list,
-            [mock.call('netshowlib.linux.stp'),
+            [mock.call('netshowlib.linux.ip_neighbor'),
              mock.call('netshowlib.linux.lldp'),
              mock.call('netshowlib.linux.ipaddr')]
         )

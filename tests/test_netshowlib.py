@@ -16,6 +16,7 @@ from asserts import assert_equals, mod_args_generator
 import netshowlib.netshowlib as nn
 from nose.tools import set_trace
 import mock
+import sys
 from mock import MagicMock
 
 
@@ -34,9 +35,9 @@ def test_os_check(mock_import,
     """ test os discovery """
     # return a directory with 3 OS types, each will return different priorities
     # choose the one with the highest priority
-    mock_glob.return_value = ['something/linux.discover',
-                              'something/debian.discover',
-                              'something/debian.discover']
+    mock_glob.return_value = ['path/discovery/linux',
+                              'path/discovery/debian',
+                              'path/discovery/ubuntu']
     mock_linux = MagicMock()
     mock_linux.name_and_priority.return_value = {'Linux': 0}
     mock_debian = MagicMock()
@@ -51,7 +52,12 @@ def test_os_check(mock_import,
     }
     mock_import.side_effect = mod_args_generator(values)
     assert_equals(nn.os_check(), 'ubuntu')
+    if hasattr(sys, 'real_prefix'):
+        mock_glob.assert_called_with(sys.prefix + '/var/lib/netshow-lib/discovery/*')
+    else:
+        mock_glob.assert_called_with('/var/lib/netshow-lib/discovery/*')
 
+    nn.os_check()
 
 @mock.patch('netshowlib.netshowlib.os_check')
 @mock.patch('netshowlib.netshowlib.import_module')
