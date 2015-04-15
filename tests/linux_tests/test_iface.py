@@ -64,7 +64,6 @@ class TestLinuxIface(object):
         assert_equals(len(lldp_output), 2)
         assert_equals(lldp_output[0].get('adj_hostname'), 'right')
 
-
     @mock.patch('netshowlib.linux.iface.common.os.readlink')
     def test_read_symlink(self, mock_readlink):
         mock_readlink.return_value = '../../bond25'
