@@ -41,7 +41,8 @@ def _parse_ip_info(command, iptype, ip_neigh_dict):
     except:
         return
 
-    fileio = StringIO(neighbor_table)
+    decoded_str = neighbor_table.decode('utf-8')
+    fileio = StringIO(decoded_str)
     for line in fileio:
         if len(line.strip()) <= 0:
             continue
