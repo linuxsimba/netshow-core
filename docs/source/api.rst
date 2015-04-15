@@ -17,7 +17,8 @@ Linux OS Modules
   linux/bond.rst
   linux/lacp.rst
   linux/lldp.rst
-  linux/ipaddr.rst
+  linux/ipaddress.rst
   linux/ipneighbor.rst
+  linux/system_summary.rst
 
 

@@ -2,4 +2,4 @@
 Credits
 ********
 
-Maintainer: Stanley Karunditu (`@skamithi<http://github.com/skamithi/`_)
+Maintainer: Stanley Karunditu (`@skamithi <http://github.com/skamithi/>`_)
