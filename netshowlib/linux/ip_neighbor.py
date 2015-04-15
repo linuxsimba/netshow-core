@@ -76,6 +76,7 @@ class IpNeighbor(object):
             self._cache = None
         self.ipv4 = {}
         self.ipv6 = {}
+        self._all_neighbors = None
         self.name = name
 
     def run(self):
@@ -88,11 +89,15 @@ class IpNeighbor(object):
             self._cache = cacheinfo()
         self.ipv4 = self._cache.get(self.name).get('ipv4')
         self.ipv6 = self._cache.get(self.name).get('ipv6')
+        self._all_neighbors = self.ipv4.copy()
+        self._all_neighbors.update(self.ipv6)
 
     @property
     def all_neighbors(self):
         """
         :return: a list of all ip neighbors ipv4 + ipv6
         """
-        self.run()
-        return self.ipv4 + self.ipv6
+        if not self._all_neighbors:
+            self.run()
+
+        return self._all_neighbors
