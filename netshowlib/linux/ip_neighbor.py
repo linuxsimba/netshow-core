@@ -70,21 +70,29 @@ class IpNeighbor(object):
     * **ipv6**: ipv6 neighbor entries
     """
     def __init__(self, name, cache=None):
-        self._cache = cache
+        if cache:
+            self._cache = cache.ip_neighbor
+        else:
+            self._cache = None
         self.ipv4 = {}
         self.ipv6 = {}
         self.name = name
 
     def run(self):
         """
-        collect IP neighbor entries and grab the one associated with this interface
+        This function checks the cache for ip neighbor information
+        If it is not there, it grabs this info from the
+        system and populates the necessary attributes
         """
-        if self._cache:
-            return
-
-
+        if not self._cache:
+            self._cache = cacheinfo()
+        self.ipv4 = self._cache.get(self.name).get('ipv4')
+        self.ipv6 = self._cache.get(self.name).get('ipv6')
 
     @property
     def all_neighbors(self):
+        """
+        :return: a list of all ip neighbors ipv4 + ipv6
+        """
         self.run()
         return self.ipv4 + self.ipv6

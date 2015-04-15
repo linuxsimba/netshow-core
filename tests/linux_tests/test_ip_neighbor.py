@@ -30,4 +30,13 @@ def test_cacheinfo(mock_arp_exec):
 
 
 class TestIpNeighbor(object):
-    pass
+    def setup(self):
+        self.ipneigh = ip_neighbor.IpNeighbor('eth1')
+
+    @mock.patch('netshowlib.linux.ip_neighbor.cacheinfo')
+    def test_run(self, mock_cacheinfo):
+        mock_cacheinfo.return_value = {'eth1':
+                                       {'ipv4':
+                                        {'10.1.1.1': '11:22:33:44:55:66'}}}
+        self.ipneigh.run()
+        assert_equals(self.ipneigh.ipv4, {'10.1.1.1': '11:22:33:44:55:66'})
