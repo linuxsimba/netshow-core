@@ -5,7 +5,7 @@ collecting various information about a linux interface.
 
 import netshowlib.netshowlib as nn
 import netshowlib.linux.common as common
-import netshowlib.linux.ipaddr as ipaddr
+import netshowlib.linux.ip_address as ip_address
 import netshowlib.linux.lldp as lldp
 import netshowlib.linux.ip_neighbor as ip_neighbor
 import os
@@ -63,15 +63,14 @@ class Iface(object):
         Difference between *adminDown* and *Down* is that the in *adminDown* \
         state the carrier does not exist. To get into *adminDown* state \
         is the state achieved when ``ip link set down`` is executed on an interface
-    * **ipaddr**: This provides a list of IPv4 and IPv6 addresses \
+    * **ip_address**: This provides a list of IPv4 and IPv6 addresses \
         associated with the interface
     * **ip_addr_assign**: If the address is configured via \
         DHCP this property is set
-    * **ipaddr**: pointer to  \
-        :class:`linux.ipaddr<netshowlib.linux.ipaddr.Ipaddr>` \
+    * **ip_address**: pointer to  \
+        :class:`linux.ip_address<netshowlib.linux.ip_address.Ipaddr>` \
         class instance
-    * **ip_neighbor**: pointer to \
-        :class:`linux.ip_neighbor<netshowlib.linux.ip_neighbor.IpNeighbor>` class instance
+    * **ip_neighbor**: pointer to _address:class:`linux.ip_neighbor<netshowlib.linux.ip_neighbor.IpNeighbor>` class instance
     """
     def __init__(self, name, cache=None):
         self._mac = None
@@ -83,7 +82,7 @@ class Iface(object):
         self._sys_path_root = common.SYS_PATH_ROOT
         self._port_type = 0
         self._feature_cache = cache
-        self._ipaddr = ipaddr.Ipaddr(name, cache)
+        self._ip_address = ip_address.IpAddress(name, cache)
         self._ip_neighbor = ip_neighbor.IpNeighbor(name, cache)
         self._ip_addr_assign = None
         self._cache = cache
@@ -178,8 +177,8 @@ class Iface(object):
                 smask = match.group(2)
                 smask = common.netmask_dot_notation_to_cidr(smask)
                 dhcpaddr = ip_addr + '/' + str(smask)
-                if self.ipaddr.all_ips:
-                    for i in self.ipaddr.all_ips:
+                if self.ip_address.allentries:
+                    for i in self.ip_address.allentries:
                         if dhcpaddr == i:
                             self._ip_addr_assign = 'dhcp'
                             return
@@ -393,16 +392,16 @@ class Iface(object):
         return lldp.interface(self.name, self._cache)
 
     @property
-    def ipaddr(self):
+    def ip_address(self):
         """
         gets IP address from cache or system, depending on whether \
         a cache is provided
 
         :return: :class:`Ipaddr instance specific to this interface \
-            <netshowlib.linux.ipaddr.Ipaddr>`
+            <netshowlib.linux.ip_address.Ipaddr>`
         """
-        self._ipaddr.run()
-        return self._ipaddr
+        self._ip_address.run()
+        return self._ip_address
 
     @property
     def ip_neighbor(self):

@@ -63,7 +63,7 @@ def cacheinfo():
     return parse_ip_cache(_fileio)
 
 
-class Ipaddr(object):
+class IpAddress(object):
     """ Ipaddr class attributes
 
     * **ipv4**: list of IPv4 addresses in CIDR format
@@ -80,7 +80,7 @@ class Ipaddr(object):
         """ list of IPv6 addresses in CIDR format """
         self.name = name
         if cache:
-            self._cache = cache.ipaddr
+            self._cache = cache.ip_address
         else:
             self._cache = None
 

@@ -6,7 +6,7 @@
 # pylint: disable=W0201
 # pylint: disable=F0401
 # pylint: disable=W0613
-import netshowlib.linux.ipaddr as ipaddr_mod
+import netshowlib.linux.ip_address as ip_address_mod
 import netshowlib.linux.cache as feature_cache
 from asserts import assert_equals
 from nose.tools import set_trace
@@ -18,43 +18,43 @@ except ImportError:
     from io import StringIO
 
 
-class TestLinuxIpaddr(object):
+class TestLinuxIpAddress(object):
 
     def test_ips(self):
-        self.ipaddr = ipaddr_mod.Ipaddr('eth1')
-        self.ipaddr.ipv4 = ['10.1.1.1/24']
-        self.ipaddr.ipv6 = ['10:1:1::1/64']
-        assert_equals(self.ipaddr.allentries, ['10.1.1.1/24', '10:1:1::1/64'])
+        self.ip_address = ip_address_mod.IpAddress('eth1')
+        self.ip_address.ipv4 = ['10.1.1.1/24']
+        self.ip_address.ipv6 = ['10:1:1::1/64']
+        assert_equals(self.ip_address.allentries, ['10.1.1.1/24', '10:1:1::1/64'])
 
-    @mock.patch('netshowlib.linux.ipaddr.parse_ip_cache')
+    @mock.patch('netshowlib.linux.ip_address.parse_ip_cache')
     def test_cacheinfo(self, mock_parse):
         mock_parse.return_value = "hash of ips"
-        result = ipaddr_mod.cacheinfo()
+        result = ip_address_mod.cacheinfo()
         assert_equals(result, "hash of ips")
 
-    @mock.patch('netshowlib.linux.ipaddr.cacheinfo')
-    def test_run_ipaddr(self, mock_ip_cache):
+    @mock.patch('netshowlib.linux.ip_address.cacheinfo')
+    def test_run_ip_address(self, mock_ip_cache):
         """ get ipv6 and ipv4 info """
         # using feature cache
         _output = open('tests/linux_tests/ip_addr_show.txt').read()
         output = StringIO(_output)
-        mock_ip_cache.return_value = ipaddr_mod.parse_ip_cache(output)
+        mock_ip_cache.return_value = ip_address_mod.parse_ip_cache(output)
         _feature_cache = feature_cache.Cache()
-        ipaddr = ipaddr_mod.Ipaddr('eth0', _feature_cache)
-        ipaddr.run()
-        assert_equals(ipaddr.ipv4, ['192.168.0.33/24'])
-        assert_equals(ipaddr.ipv6, [])
+        ip_address = ip_address_mod.IpAddress('eth0', _feature_cache)
+        ip_address.run()
+        assert_equals(ip_address.ipv4, ['192.168.0.33/24'])
+        assert_equals(ip_address.ipv6, [])
         # without feature cache
-        ipaddr = ipaddr_mod.Ipaddr('eth0')
-        ipaddr.run()
-        assert_equals(ipaddr.ipv4, ['192.168.0.33/24'])
-        assert_equals(ipaddr.ipv6, [])
+        ip_address = ip_address_mod.IpAddress('eth0')
+        ip_address.run()
+        assert_equals(ip_address.ipv4, ['192.168.0.33/24'])
+        assert_equals(ip_address.ipv6, [])
 
     def test_parse_ip_cache(self):
         """ testing parsing ip cache info """
         _output = open('tests/linux_tests/ip_addr_show.txt').read()
         output = StringIO(_output)
-        result = ipaddr_mod.parse_ip_cache(output)
+        result = ip_address_mod.parse_ip_cache(output)
         assert_equals(
             result,
             {

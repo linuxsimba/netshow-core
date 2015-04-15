@@ -134,19 +134,19 @@ class TestLinuxIface(object):
         mock_read_oneline.return_value = '1'
         assert_equals(self.iface.linkstate, 2)
 
-    @mock.patch('netshowlib.linux.ipaddr.cacheinfo')
+    @mock.patch('netshowlib.linux.ip_address.cacheinfo')
     def test_read_ipaddr(self, mock_cache_info):
         """ test reading IP address """
         # no cache provided.
         mock_cache_info.return_value = {'eth2': {
             'ipv4': ['192.168.1.1/24'], 'ipv6': ['10:1:1::1/128']}}
         self.iface = linux_iface.Iface('eth2')
-        _ipaddr = self.iface.ipaddr
+        _ipaddr = self.iface.ip_address
         assert_equals(_ipaddr.ipv4, ['192.168.1.1/24'])
         new_cache = linux_cache.Cache()
-        new_cache.ipaddr = {'eth2': {'ipv4': ['10.1.1.1/24']}}
+        new_cache.ip_address = {'eth2': {'ipv4': ['10.1.1.1/24']}}
         self.iface = linux_iface.Iface('eth2', new_cache)
-        assert_equals(self.iface.ipaddr.ipv4, ['10.1.1.1/24'])
+        assert_equals(self.iface.ip_address.ipv4, ['10.1.1.1/24'])
 
     # tests the _initial_tests functions as well
     @mock.patch('netshowlib.linux.iface.os.path.exists')
@@ -241,8 +241,8 @@ class TestLinuxIface(object):
     def test_checking_if_dhcp_is_used(self):
         dhcpfile = open('tests/linux_tests/dhclient.eth0.leases')
         # some fancy mocking to bypass ip address checking
-        self.iface._ipaddr = mock.MagicMock()
-        self.iface.ipaddr.all_ips = ['192.168.122.64/24']
+        self.iface._ip_address = mock.MagicMock()
+        self.iface.ip_address.allentries = ['192.168.122.64/24']
         # -----
         with mock.patch(mock_open_str()) as mock_open:
             mock_open.return_value = dhcpfile
