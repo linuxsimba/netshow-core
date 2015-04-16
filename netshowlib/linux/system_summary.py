@@ -32,7 +32,7 @@ class SystemSummary(object):
         """
         :return: uptime of the linux device in seconds
         """
-        filepath = 'proc/uptime'
+        filepath = '/proc/uptime'
         uptime = common.read_file_oneline(filepath)
         self._uptime = uptime.split()[0]
         return self._uptime
