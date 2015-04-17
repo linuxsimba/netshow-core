@@ -1,5 +1,5 @@
 # Linux netshow library
-
+ 
 Abstracts network related information such as L2 info, LLDP, Network services
 (ntp, dhcp, dhcrelay) into Iface Objects.
 This covers, physical ports, bonds and bridges only. Designed to
