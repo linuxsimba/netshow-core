@@ -18,9 +18,9 @@ def import_module(mod_str):
     """
 
     _module = __import__(mod_str)
-    _mod_parts = _module.split('.')
+    _mod_parts = mod_str.split('.')
     for _mod_part in _mod_parts[1:]:
-        mod = getattr(mod, mod_part)
+        mod = getattr(_module, _mod_part)
     return mod
 
 
