@@ -20,7 +20,7 @@ VAR_DIR = os.path.join(VAR_PATH, 'lib', 'netshow-lib')
 
 from setuptools import setup, find_packages
 setup(
-    name='linux-netshow-lib',
+    name='netshow-lib',
     version=get_version(),
     url="http://github.com/CumulusNetworks/netshow-lib",
     description="Python Library to Abstract Linux Networking Data",

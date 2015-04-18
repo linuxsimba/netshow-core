@@ -9,18 +9,18 @@ import operator
 import sys
 
 
-def import_module(name):
+def import_module(mod_str):
     """
-    from stack overflow.
+    inspired by post on stackoverflow
     :param name: import path string like 'netshowlib.os_discovery.linux'
     :return: module matching the import statement
 
     """
 
-    mod = __import__(name)
-    components = name.split('.')
-    for comp in components[1:]:
-        mod = getattr(mod, comp)
+    _module = __import__(mod_str)
+    _mod_parts = _module.split('.')
+    for _mod_part in _mod_parts[1:]:
+        mod = getattr(mod, mod_part)
     return mod
 
 
