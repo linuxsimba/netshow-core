@@ -1,6 +1,6 @@
 # pylint: disable=c0111
 
-from netshowlib import get_version
+from netshowlib._version import get_version
 try:
     import ez_setup
     ez_setup.use_setuptools()
@@ -16,6 +16,7 @@ setup(
     author='Cumulus Networks',
     author_email='ce-ceng@cumulusnetworks.com',
     packages=find_packages(),
+    namespace_packages=['netshowlib'],
     zip_safe=False,
     license='GPLv2',
     classifiers=[
