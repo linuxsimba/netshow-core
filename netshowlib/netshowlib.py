@@ -12,7 +12,7 @@ import sys
 def import_module(mod_str):
     """
     inspired by post on stackoverflow
-    :param name: import path string like 'netshowlib.os_discovery.linux'
+    :param name: import path string like 'netshowlib.linux.provider_discovery'
     :return: module matching the import statement
 
     """
@@ -24,10 +24,11 @@ def import_module(mod_str):
     return _module
 
 
-def os_check():
+def provider_check():
     """
-    | **OS discovery check**
-    looks into ``netshowlib/os_discovery`` path for any OS discovery files, and runs \
+    | **Provider discovery check**
+    looks into ``netshowlib/provider_discovery`` path for any \
+    provider discovery files, and runs \
     the ``name_and_priority()`` function. If this function returns a hash with an \
     operating system name and priority, then this is put in a dict. \
     The OS with the max priority is chosen as the desired OS to use and the OS name \
@@ -36,27 +37,29 @@ def os_check():
     :return: OS name of best match.
     """
 
-    # get a list of files under the os_discovery path
+    # get a list of files under the provider_discovery path
+    # check if in virtualenv instance by looking for real_prefix (virtualenv) or
+    # VIRTUAL_ENV (pvenv)..
     root_prefix = ''
-    if hasattr(sys, 'real_prefix'):
+    if hasattr(sys, 'real_prefix') or os.environ.get('VIRTUAL_ENV'):
         root_prefix = sys.prefix
 
     _dir_entries = glob.glob(root_prefix + "/var/lib/netshow-lib/discovery/*")
-    _os_types = {}
+    _providernames = {}
     # run os discovery check returns hash entries that look like this
     # { 'linux': 0 }. the integer is a priority . The lower the priority
     # the less likely the os is a match
     for _entry in _dir_entries:
         import_str = \
-            "netshowlib.%s.os_discovery" % \
+            "netshowlib.%s.provider_discovery" % \
             os.path.basename(_entry)
-        os_type = import_module(import_str)
-        result = os_type.name_and_priority()
+        providername = import_module(import_str)
+        result = providername.name_and_priority()
         if result:
-            _os_types.update(result)
+            _providernames.update(result)
 
-    if _os_types:
-        return max(_os_types.items(), key=operator.itemgetter(1))[0].lower()
+    if _providernames:
+        return max(_providernames.items(), key=operator.itemgetter(1))[0].lower()
     # if no OS found, return none
     return None
 
@@ -65,25 +68,25 @@ def feature_cache():
     """
     Performs OS discovery and returns the OS appropriate Cache() module
     """
-    os_type = os_check()
-    if os_type:
-        cache_path = "netshowlib.%s.cache" % os_type
+    providername = provider_check()
+    if providername:
+        cache_path = "netshowlib.%s.cache" % providername
         cache_module = import_module(cache_path)
         return cache_module.Cache()
     return None
 
 
-def iface(name, os_type=None, cache=None):
+def iface(name, providername=None, cache=None):
     """
     | **Interface Discovery **
-    looks into ``netshowlib/[os_type]/iface/iface_type`` to get the correct
+    looks into ``netshowlib/[providername]/iface/iface_type`` to get the correct
     interface type
 
     :return:  Iface object that best matches interface characteristics
     """
-    _ostype = os_type
-    if not _ostype:
-        _ostype = os_check()
+    _providername = providername
+    if not _providername:
+        _providername = provider_check()
 
-    import_str = 'netshowlib.%s.iface' % _ostype
+    import_str = 'netshowlib.%s.iface' % _providername
     return import_module(import_str).iface_type(name, cache=cache)
