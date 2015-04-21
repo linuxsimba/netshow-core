@@ -44,7 +44,7 @@ def provider_check():
     if hasattr(sys, 'real_prefix') or os.environ.get('VIRTUAL_ENV'):
         root_prefix = sys.prefix
 
-    _dir_entries = glob.glob(root_prefix + "/usr/share/netshow-lib/discovery/*")
+    _dir_entries = glob.glob(root_prefix + "/usr/share/netshow-lib/providers/*")
     _providernames = {}
     # run os discovery check returns hash entries that look like this
     # { 'linux': 0 }. the integer is a priority . The lower the priority
