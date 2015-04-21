@@ -12,25 +12,25 @@ To create an interface with interface type discovery, call
 
 The mechanics behind this command is as follows
 
-1. Method first performs :meth:`OS discovery<netshowlib.netshowlib.os_check>` ::
+1. Method first performs :meth:`OS discovery<netshowlib.netshowlib.provider_check>` ::
 
 
-2. Then calls the interface discovery function of the specific OS type. For
-   example, for the *linux* OS type, the call is :meth:`netshowlib.linux.iface.iface_type` ::
+2. Then calls the interface discovery function of the specific provider. For
+   example, for the *linux* OS type, the call is :meth:`netshowlib.linux.iface.iface` ::
 
 
 Probing Many Interfaces
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When probing many interfaces, it is better to first do OS discovery,
+When probing many interfaces, it is better to first do Provider discovery,
 and feature caching, then inform the interface discovery method what the OS type is.
 
 .. code-block:: python
 
   from netshowlib import netshowlib as nl
 
-  # perform OS discovery, get os type
-  os_type = nl.os_check()
+  # perform Provider discovery, get os type
+  os_type = nl.provider_check()
 
   # perform cache of features like ip addresses, lldp
   feature_cache = cache.cache()

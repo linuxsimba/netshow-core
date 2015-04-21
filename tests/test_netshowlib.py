@@ -57,13 +57,14 @@ def test_provider_check(mock_import,
     # running in a virtual env
     sys.real_prefix = 'blah'
     nn.provider_check()
-    mock_glob.assert_called_with(sys.prefix + '/var/lib/netshow-lib/discovery/*')
+    mock_glob.assert_called_with(sys.prefix + '/usr/share/netshow-lib/discovery/*')
 
     # not running in a virtualenv
     delattr(sys, 'real_prefix')
     os.environ['VIRTUAL_ENV'] = ''
     nn.provider_check()
-    mock_glob.assert_called_with('/var/lib/netshow-lib/discovery/*')
+    mock_glob.assert_called_with('/usr/share/netshow-lib/discovery/*')
+
 
 @mock.patch('netshowlib.netshowlib.provider_check')
 @mock.patch('netshowlib.netshowlib.import_module')
