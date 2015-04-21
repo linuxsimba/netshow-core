@@ -7,7 +7,7 @@ netshow-lib
     features.rst
     installation.rst
     development.rst
-    os_discovery.rst
+    provider_discovery.rst
     iface_discovery.rst
     api.rst
     license.rst
@@ -19,11 +19,10 @@ Introduction
 
 netshow-lib is a Python library that describes interface objects and associated network information relevant
 to that interface. Originally developed to work with Cumulus Linux, it can work on any Linux system.
-The library is useful in Linux systems with lots of interfaces like hypervisors
-and switches
+The library is useful in Linux systems with lots of interfaces like hypervisors and switches
 
 Below is a simple example.
-Get LLDP information for an interface. Using ``iface()`` activates OS discovery.
+Get LLDP information for an interface. Using ``iface()`` activates provider discovery.
 
 ::
 
