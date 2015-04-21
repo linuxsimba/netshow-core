@@ -79,7 +79,7 @@ def feature_cache():
 def iface(name, providername=None, cache=None):
     """
     | **Interface Discovery **
-    looks into ``netshowlib/[providername]/iface/iface_type`` to get the correct
+    calls into ``netshowlib.[provider].iface.iface()`` to get the correct
     interface type
 
     :return:  Iface object that best matches interface characteristics
@@ -89,4 +89,4 @@ def iface(name, providername=None, cache=None):
         _providername = provider_check()
 
     import_str = 'netshowlib.%s.iface' % _providername
-    return import_module(import_str).iface_type(name, cache=cache)
+    return import_module(import_str).iface(name, cache=cache)

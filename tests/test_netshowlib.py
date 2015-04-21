@@ -73,19 +73,19 @@ def test_iface_discovery(mock_import, mock_provider_check):
     # provider_check is none
     mock_provider_check.return_value = 'debian'
     mock_debian_iface = MagicMock()
-    mock_debian_iface.iface_type.return_value = 'its a debian bridge'
+    mock_debian_iface.iface.return_value = 'its a debian bridge'
     values = {'netshowlib.debian.iface': mock_debian_iface}
     mock_import.side_effect = mod_args_generator(values)
     assert_equals(nn.iface('eth1'), 'its a debian bridge')
     # if provider_check is not none
     mock_debian_iface = MagicMock()
-    mock_debian_iface.iface_type.return_value = 'its a debian bridge'
+    mock_debian_iface.iface.return_value = 'its a debian bridge'
     values['netshowlib.debian.iface'] = mock_debian_iface
     assert_equals(nn.iface('eth1', providername='debian'), 'its a debian bridge')
     # if cache is set provider_check is none
     mock_debian_iface.reset_mock()
     mock_debian_iface = MagicMock()
-    mock_debian_iface.iface_type.return_value = 'its a debian bridge'
+    mock_debian_iface.iface.return_value = 'its a debian bridge'
     mock_debian_cache = MagicMock()
     values = {'netshowlib.debian.iface': mock_debian_iface,
               'netshowlib.debian.cache': mock_debian_cache}
@@ -94,4 +94,4 @@ def test_iface_discovery(mock_import, mock_provider_check):
     assert_equals(nn.iface('eth1', cache=all_cache),
                   'its a debian bridge')
     # confirm syntax for iface_type accepts cache
-    mock_debian_iface.iface_type.assert_called_with('eth1', cache=all_cache)
+    mock_debian_iface.iface.assert_called_with('eth1', cache=all_cache)
