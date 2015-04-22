@@ -44,7 +44,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'linux-netshow-lib'
+project = u'netshow-lib'
 copyright = u'2015, Cumulus Networks'
 
 # The version info for the project you're documenting, acts as replacement for

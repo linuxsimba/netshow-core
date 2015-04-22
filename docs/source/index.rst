@@ -22,7 +22,7 @@ to that interface. Originally developed to work with Cumulus Linux, it can work 
 The library is useful in Linux systems with lots of interfaces like hypervisors and switches
 
 Below is a simple example.
-Get LLDP information for an interface. Using ``iface()`` activates provider discovery and interface discovery
+Get LLDP information for an interface. Using ``iface()`` activates provider discovery.
 
 ::
 
@@ -31,20 +31,20 @@ Get LLDP information for an interface. Using ``iface()`` activates provider disc
   # Create iface object
   iface = netshowlib.iface('eth1')
 
-  print (netshowlib.provider_check())
+  print (netshowlib.os_check())
   >> 'linux'
 
   # print lldp information from linux system
   print(iface.lldp)
   >> [something]
 
-Using an provider specific interface. No Provider discovery or Interface Discovery
+Using an OS specific interface. No OS discovery
 
 ::
 
   from netshowlib import netshowlib
 
-  iface = netshowlib.linux.Iface('eth1')
+  iface = netshowlib.linux.Iface('swp10')
 
   print(iface.lldp)
   >> [something]

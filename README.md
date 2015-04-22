@@ -1,20 +1,24 @@
-# Linux netshow library
+# Netshow library
 
-Abstracts network related information such as L2 info, LLDP, Network services
-(ntp, dhcp, dhcrelay) into Iface Objects.
-This covers, physical ports, bonds and bridges only. Designed to
-work with a linux device that is configured as a switch, but can work on a
-server.
+Core module for an infrastructure that abstracts network related information
+such as L2 info, LLDP, Network services (dhcp, arp, ip) into Iface Objects.
 
-pynetlinux and python-netiface doesn't quite do what I want.
+It is designed to work with a linux device that is configured as a switch, but can work on a
+server, but has a provider plugin architecture that can be expanded to other
+operating systems.
 
 ## Installation
 
+Not normally installed by itself. It is normally a requirement when install
+a provider plugin.
+
+But if you wish to do development, like when creating a new provider,
+use ``pip`` to download a copy of this core module
 ```
-pip install https://github.com/skamithi/linux-netshow-lib/archive/master.tar.gz
+pip install https://github.com/CumulusNetworks/netshow-lib/archive/master.tar.gz
 ```
 
-Project will eventually be available on PyPi.
+Project will be available on PyPi soon.
 
 ## Usage
 
@@ -24,7 +28,7 @@ TODO: Write usage instructions
 
 1. Fork it!
 2. Create your feature branch: `git checkout -b my-new-feature`
-3. Create a [virtualenv](https://pypi.python.org/pypi/virtualenv/) instance.
+3. Create a ``pyenv`` or [virtualenv](https://pypi.python.org/pypi/virtualenv/) instance.
 Please try and develop using the latest stable Python3. Example:
 ```
 $ virtualenv ~/netshow_dev /usr/local/bin/python3
