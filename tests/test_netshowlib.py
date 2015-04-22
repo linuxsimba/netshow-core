@@ -54,16 +54,9 @@ def test_provider_check(mock_import,
     mock_import.side_effect = mod_args_generator(values)
     assert_equals(nn.provider_check(), 'ubuntu')
 
-    # running in a virtual env
     sys.real_prefix = 'blah'
     nn.provider_check()
-    mock_glob.assert_called_with(sys.prefix + '/usr/share/netshow-lib/providers/*')
-
-    # not running in a virtualenv
-    delattr(sys, 'real_prefix')
-    os.environ['VIRTUAL_ENV'] = ''
-    nn.provider_check()
-    mock_glob.assert_called_with('/usr/share/netshow-lib/providers/*')
+    mock_glob.assert_called_with(sys.prefix + '/share/netshow-lib/providers/*')
 
 
 @mock.patch('netshowlib.netshowlib.provider_check')
