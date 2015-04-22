@@ -16,12 +16,9 @@ setup(
     author='Cumulus Networks',
     author_email='ce-ceng@cumulusnetworks.com',
     packages=find_packages(),
-    # activate this when project is opensourced and netshow-lib and netshow-linux-lib
-    # are available on pypi.
-    # install_requires=[
-    #    "netshow-lib"
-    #    "netshow-linux-lib"
-    # ]
+    install_requires=[
+        "netshow-lib"
+    ],
     zip_safe=False,
     license='GPLv2',
     classifiers=[
