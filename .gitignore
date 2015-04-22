@@ -1,3 +1,4 @@
+*.rej
 *.egg
 *.zip
 .tox/
