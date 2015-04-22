@@ -40,11 +40,7 @@ def provider_check():
     # get a list of files under the provider_discovery path
     # check if in virtualenv instance by looking for real_prefix (virtualenv) or
     # VIRTUAL_ENV (pvenv)..
-    root_prefix = ''
-    if hasattr(sys, 'real_prefix') or os.environ.get('VIRTUAL_ENV'):
-        root_prefix = sys.prefix
-
-    _dir_entries = glob.glob(root_prefix + "/usr/share/netshow-lib/providers/*")
+    _dir_entries = glob.glob(sys.prefix + "/share/netshow-lib/providers/*")
     _providernames = {}
     # run os discovery check returns hash entries that look like this
     # { 'linux': 0 }. the integer is a priority . The lower the priority
