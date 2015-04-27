@@ -16,10 +16,12 @@ setup(
     author='Cumulus Networks',
     author_email='ce-ceng@cumulusnetworks.com',
     packages=find_packages(),
+    namespace_packages=['netshow'],
     install_requires=[
         "netshow-lib"
     ],
     zip_safe=False,
+    scripts=['bin/netshow'],
     license='GPLv2',
     classifiers=[
         'Topic :: System :: Networking',
