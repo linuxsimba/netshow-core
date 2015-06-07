@@ -2,7 +2,10 @@
 # pylint: disable=E0611
 from netshow import netshow
 import mock
-
+from asserts import assert_equals
+from netshow.netshow import UnableToFindProviderException
+import os
+import sys
 
 @mock.patch('netshowlib.netshowlib.provider_check')
 @mock.patch('netshowlib.netshowlib.import_module')
@@ -10,3 +13,42 @@ def test_run(mock_import_module, mock_provider_check):
     mock_provider_check.return_value = 'linux'
     netshow.run()
     mock_import_module.assert_called_with('netshow.linux.show')
+
+
+@mock.patch('netshowlib.netshowlib.provider_check')
+@mock.patch('netshowlib.netshowlib.import_module')
+def test_error_if_no_provider_found(mock_mod, mock_provider):
+    mock_provider.return_value = None
+    assert_equals(netshow.run(), UnableToFindProviderException)
+
+
+@mock.patch('netshowlib.netshowlib.provider_check')
+@mock.patch('netshowlib.netshowlib.import_module')
+def testing_of_env_vars_when_lang_is_c(mock_mod, mock_provider):
+    mock_provider.return_value = 'linux'
+    # test when os LANG is set to C set it by default to C
+    os.environ['LANGUAGE'] = 'C'
+    netshow.run()
+    assert_equals(os.environ.get('LANGUAGE'), 'en')
+
+
+@mock.patch('netshowlib.netshowlib.provider_check')
+@mock.patch('netshowlib.netshowlib.import_module')
+def testing_of_env_vars_when_lang_is_not_c(mock_mod, mock_provider):
+    mock_provider.return_value = 'linux'
+    # test when os LANG is set to C set it by default to C
+    os.environ['LANGUAGE'] = 'es'
+    netshow.run()
+    assert_equals(os.environ.get('LANGUAGE'), 'es')
+
+
+@mock.patch('netshowlib.netshowlib.provider_check')
+@mock.patch('netshowlib.netshowlib.import_module')
+def testing_of_env_vars_when_lang_is_not_c_or_en(mock_mod, mock_provider):
+    mock_provider.return_value = 'linux'
+    # test when os LANG is set to C set it by default to C
+    os.environ['LOCPATH'] = ''
+    os.environ['LANGUAGE'] = 'es'
+    netshow.run()
+    assert_equals(os.environ.get('LANGUAGE'), 'es')
+    assert_equals(os.environ.get('LOCPATH'), (sys.prefix + '/share/locale'))
