@@ -7,6 +7,7 @@ from netshow.netshow import UnableToFindProviderException
 import os
 import sys
 
+
 @mock.patch('netshowlib.netshowlib.provider_check')
 @mock.patch('netshowlib.netshowlib.import_module')
 def test_run(mock_import_module, mock_provider_check):
@@ -52,3 +53,17 @@ def testing_of_env_vars_when_lang_is_not_c_or_en(mock_mod, mock_provider):
     netshow.run()
     assert_equals(os.environ.get('LANGUAGE'), 'es')
     assert_equals(os.environ.get('LOCPATH'), (sys.prefix + '/share/locale'))
+
+
+@mock.patch('netshow.netshow.gettext.translation')
+def test_i18n_app(mock_gettext):
+    provider = 'netshow-linux'
+    translate_mock = mock.MagicMock()
+    mock_gettext.return_value = translate_mock
+    _result = netshow.i18n_app(provider)
+    # check that it calls the right path to the .mo files
+    mock_gettext.assert_called_with(provider, os.path.join(
+        sys.prefix, 'share', 'locale'))
+    # check that it calls the right gettext function. In this
+    # case should be lgettext
+    assert_equals(_result._mock_name, 'lgettext')

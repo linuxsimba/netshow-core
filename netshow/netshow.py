@@ -3,9 +3,13 @@ import netshowlib.netshowlib as nn
 
 import os
 import sys
+import gettext
 
 
 class UnableToFindProviderException(Exception):
+    """
+    Exception when Provider is not Found
+    """
     pass
 
 
@@ -25,3 +29,16 @@ def run():
         return UnableToFindProviderException
     import_str = 'netshow.%s.show' % _ostype
     nn.import_module(import_str).run()
+
+
+def i18n_app(providername):
+    """
+    import this function at the top of each provider netshow component
+    that has cli output  functions. Example
+
+    from netshow.netshow import i18n_app as _
+    """
+    _translate = gettext.translation(providername,
+                                     os.path.join(sys.prefix,
+                                                  'share', 'locale'))
+    return _translate.lgettext
