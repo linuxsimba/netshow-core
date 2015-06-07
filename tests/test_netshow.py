@@ -63,7 +63,7 @@ def test_i18n_app(mock_gettext):
     _result = netshow.i18n_app(provider)
     # check that it calls the right path to the .mo files
     mock_gettext.assert_called_with(provider, os.path.join(
-        sys.prefix, 'share', 'locale'))
+        sys.prefix, 'share', 'locale'), fallback=True)
     # check that it calls the right gettext function. In this
     # case should be lgettext
     assert_equals(_result._mock_name, 'lgettext')

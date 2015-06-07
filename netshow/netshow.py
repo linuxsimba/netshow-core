@@ -40,5 +40,6 @@ def i18n_app(providername):
     """
     _translate = gettext.translation(providername,
                                      os.path.join(sys.prefix,
-                                                  'share', 'locale'))
+                                                  'share', 'locale'),
+                                     fallback=True)
     return _translate.lgettext
