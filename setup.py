@@ -9,7 +9,7 @@ except ImportError:
 
 from setuptools import setup, find_packages
 setup(
-    name='netshow',
+    name='netshow-core',
     version=get_version(),
     url="http://github.com/CumulusNetworks/netshow",
     description="Linux Network Troubleshooting Tool",
@@ -18,7 +18,7 @@ setup(
     packages=find_packages(),
     namespace_packages=['netshow'],
     install_requires=[
-        "netshow-lib"
+        "netshow-core-lib"
     ],
     zip_safe=False,
     scripts=['bin/netshow'],
