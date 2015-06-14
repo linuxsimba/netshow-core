@@ -9,10 +9,10 @@ except ImportError:
 
 from setuptools import setup, find_packages
 setup(
-    name='netshow-lib',
+    name='netshow-core-lib',
     version=get_version(),
     url="http://github.com/CumulusNetworks/netshow-lib",
-    description="Python Library to Abstract Linux Networking Data",
+    description="Netshow Core Library. Provides API for high level user apps and framework for providers",
     author='Cumulus Networks',
     author_email='ce-ceng@cumulusnetworks.com',
     packages=find_packages(),
