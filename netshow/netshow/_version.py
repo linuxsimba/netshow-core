@@ -1,3 +1,4 @@
+# pylint: disable=E1102
 """ Assumes package is installed before checking
 the version this way
 """

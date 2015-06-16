@@ -43,8 +43,12 @@ cd .temp
 echo " Install netshow-core-lib"
 git clone ssh://git@github.com/CumulusNetworks/netshow-core.git netshow-core
 cd netshow-core/netshow-lib
-echo "Move into devel branch"
-git checkout devel
+
+#echo "Move into devel branch"
+#git checkout devel
+
+git checkout get_tests_working
+
 echo "Create wheel for netshow-core-lib"
 python setup.py bdist_wheel
 echo "Install wheel in wheel directory"

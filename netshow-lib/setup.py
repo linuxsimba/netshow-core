@@ -1,10 +1,10 @@
 # pylint: disable=c0111
-
 try:
     import ez_setup
     ez_setup.use_setuptools()
 except ImportError:
     pass
+
 from _gitversion import get_version
 from setuptools import setup, find_packages
 
