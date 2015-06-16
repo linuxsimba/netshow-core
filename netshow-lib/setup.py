@@ -6,11 +6,12 @@ try:
     ez_setup.use_setuptools()
 except ImportError:
     pass
-
+import versioneer
 from setuptools import setup, find_packages
 setup(
     name='netshow-core-lib',
-    version=get_version(),
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
     url="http://github.com/CumulusNetworks/netshow-lib",
     description="Netshow Core Library. Provides API for high level user apps and framework for providers",
     author='Cumulus Networks',

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd netshow-lib
+
 set -e
 
 echo "starting up"
@@ -10,5 +12,5 @@ if [ ! -d "venv" ]; then
 fi
 . venv/bin/activate
 
-pip install -r requirements_develop.txt --download-cache=/tmp/$JOB_NAME
+pip install --upgrade -r requirements_develop.txt
 tox
