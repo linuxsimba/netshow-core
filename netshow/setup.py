@@ -22,6 +22,8 @@ setup(
     ],
     zip_safe=False,
     scripts=['bin/netshow'],
+    data_files=[('share/bash-completion/completions/',
+                ['data/completion/netshow'])],
     license='GPLv2',
     classifiers=[
         'Development Status :: 4 - Beta',

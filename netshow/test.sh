@@ -18,7 +18,6 @@ fi
 . venv/bin/activate
 
 # install test requirements like tox
-pwd
 pip install --upgrade -r requirements_develop.txt
 
 # Delete working directories
