@@ -1,6 +1,8 @@
 #!/bin/bash
 
-cd netshow-lib
+if [ ! -d setup.py ]; then
+  cd `dirname $0`
+fi
 
 set -e
 

@@ -6,4 +6,4 @@ import pkg_resources
 
 def get_version():
     """ get version """
-    pkg_resources.require('netshow-core')[0].version
+    return pkg_resources.require('netshow-core-lib')[0].version

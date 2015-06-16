@@ -4,7 +4,7 @@
 
 # Switch to the correct directory
 if [ ! -f setup.py ]; then
-  cd `dirname`
+  cd `dirname $0`
 fi
 
 set -e
@@ -16,6 +16,10 @@ if [ ! -d "venv" ]; then
         virtualenv venv
 fi
 . venv/bin/activate
+
+# install test requirements like tox
+pwd
+pip install --upgrade -r requirements_develop.txt
 
 # Delete working directories
 if [ -d wheel_dir ]; then

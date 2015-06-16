@@ -2,4 +2,3 @@ tox
 setuptools
 pip
 wheel
-versioneer

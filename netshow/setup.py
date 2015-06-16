@@ -6,12 +6,11 @@ try:
     ez_setup.use_setuptools()
 except ImportError:
     pass
-
+from _gitversion  import get_version
 from setuptools import setup, find_packages
 setup(
     name='netshow-core',
-    version=versioneer.get_version(),
-    cmdclass=versioneer.get_cmdclass(),
+    version=get_version(),
     url="http://github.com/CumulusNetworks/netshow",
     description="Linux Network Troubleshooting Tool",
     author='Cumulus Networks',

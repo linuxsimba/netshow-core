@@ -8,7 +8,6 @@ import glob
 import operator
 import sys
 
-
 def import_module(mod_str):
     """
     inspired by post on stackoverflow

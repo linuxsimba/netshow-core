@@ -1,0 +1,9 @@
+*/wheel_dir
+*/.gitattributes
+netshow/.temp/netshow-core/
+netshow/netshowcoretemp/
+netshow/temp1/
+*.swp
+*.pyc
+*.tox
+*/venv
