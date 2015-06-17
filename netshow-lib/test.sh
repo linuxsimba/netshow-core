@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [ ! -d setup.py ]; then
+  cd `dirname $0`
+fi
+
 set -e
 
 echo "starting up"
@@ -10,5 +14,5 @@ if [ ! -d "venv" ]; then
 fi
 . venv/bin/activate
 
-pip install -r requirements_develop.txt --download-cache=/tmp/$JOB_NAME
+pip install --upgrade -r requirements_develop.txt
 tox

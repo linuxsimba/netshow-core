@@ -1,4 +1,10 @@
-__version__ = '0.9rc1'
+# pylint: disable=E1102
+""" Assumes package is installed before checking
+the version this way
+"""
+import pkg_resources
+
 
 def get_version():
-    return __version__
+    """ get version """
+    pkg_resources.require('netshow-core')[0].version

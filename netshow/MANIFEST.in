@@ -1,0 +1,2 @@
+include RELEASE_VERSION
+include data/completion/netshow
