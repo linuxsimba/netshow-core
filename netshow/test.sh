@@ -10,7 +10,7 @@ fi
 set -e
 
 echo "starting up"
-GIT_BRANCH=devel
+GIT_BRANCH=test
 PATH=$WORKSPACE/venv/bin:/usr/local/bin:$PATH
 if [ ! -d "venv" ]; then
         virtualenv venv
