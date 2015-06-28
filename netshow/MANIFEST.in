@@ -1,2 +1,6 @@
-include RELEASE_VERSION
+include RELEASE-VERSION
+include _gitversion.py
+include ez_setup.py
 include data/completion/netshow
+
+
