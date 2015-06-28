@@ -8,6 +8,8 @@ set -e
 
 echo "starting up"
 
+git clean -xdf
+
 PATH=$WORKSPACE/venv/bin:/usr/local/bin:$PATH
 if [ ! -d "venv" ]; then
         virtualenv venv
