@@ -1,6 +1,6 @@
 """ Netshow core module """
 import netshowlib.netshowlib as nn
-
+from netshowlib import _version
 import os
 import sys
 import gettext
@@ -43,3 +43,10 @@ def i18n_app(providername):
                                                   'share', 'locale'),
                                      fallback=True)
     return _translate.lgettext
+
+def print_version():
+    version = _version.get_version()
+    version_str = "Netshow Version:\n"
+    for _k, _v in version.items():
+         version_str += "%s: %s\n" % (_k, _v)
+    return version_str
