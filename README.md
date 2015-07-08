@@ -1,6 +1,6 @@
 # netshow-core
 
-Netshow is Network Abstraction Software. It is optimized to collect core networking data from Linux devices that contain many interfaces.
+Netshow is Network Abstraction Software. It is optimized to collect core networking data from devices that contain many network interfaces.
 
 The netshow-core repository contains 2 packages:
 
