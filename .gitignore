@@ -1,0 +1,13 @@
+netshow/RELEASE-VERSION
+netshow/netshow_core.egg-info/
+*/wheel_dir
+*/.gitattributes
+netshow/build
+netshow/dist
+netshow/.temp/netshow-core/
+netshow/netshowcoretemp/
+netshow/temp1/
+*.swp
+*.pyc
+*.tox
+*/venv

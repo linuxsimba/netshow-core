@@ -14,10 +14,8 @@
 # pylint: disable=W0611
 from asserts import assert_equals, mod_args_generator
 import netshowlib.netshowlib as nn
-from nose.tools import set_trace
 import mock
 import sys
-import os
 from mock import MagicMock
 
 
@@ -88,3 +86,25 @@ def test_iface_discovery(mock_import, mock_provider_check):
                   'its a debian bridge')
     # confirm syntax for iface_type accepts cache
     mock_debian_iface.iface.assert_called_with('eth1', cache=all_cache)
+
+@mock.patch('netshowlib.netshowlib.provider_check')
+@mock.patch('netshowlib.netshowlib.import_module')
+def test_system_discovery(mock_import, mock_provider_check):
+    mock_provider_check.return_value = 'debian'
+    mock_debian_system = MagicMock()
+    mock_debian_system.SystemSummary.return_value = 'debian system summary'
+    mock_import.return_value = mock_debian_system
+    assert_equals(nn.system_summary(), 'debian system summary')
+    mock_import.assert_called_with('netshowlib.debian.system_summary')
+
+@mock.patch('netshowlib.netshowlib.provider_check')
+@mock.patch('netshowlib.netshowlib.import_module')
+def test_portlist(mock_import, mock_provider_check):
+    mock_provider_check.return_value = 'debian'
+    mock_debian_iface = MagicMock()
+    mock_debian_iface.portname_list.return_value = ['eth22', 'eth33']
+    values = {
+        'netshowlib.debian.iface': mock_debian_iface
+    }
+    mock_import.side_effect = mod_args_generator(values)
+    assert_equals(nn.portname_list(), ['eth22', 'eth33'])
