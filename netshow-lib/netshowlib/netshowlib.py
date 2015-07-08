@@ -87,6 +87,18 @@ def iface(name, providername=None, cache=None):
     return import_module(import_str).iface(name, cache=cache)
 
 
+def system_summary(providername=None):
+    """
+    returns SystemSummary class from mentioned provider
+    """
+    _providername = providername
+    if not _providername:
+        _providername = provider_check()
+
+    import_str = 'netshowlib.%s.system_summary' % _providername
+    return import_module(import_str).SystemSummary()
+
+
 def portname_list(providername=None):
     """
     Return list of ports found by the provider
