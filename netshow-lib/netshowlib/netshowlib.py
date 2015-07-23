@@ -1,3 +1,4 @@
+# pylint: disable=E1102
 """
 This module does OS discovery , and Interface discovery
 
@@ -40,7 +41,7 @@ def provider_check():
     # get a list of files under the provider_discovery path
     # use pkg_resources to figure it out
     install_location = pkg_resources.require('netshow-core-lib')[0].location
-    _dir_entries = glob.glob(install_location + "../../../share/netshow-lib/providers/*")
+    _dir_entries = glob.glob(install_location + "/../../../share/netshow-lib/providers/*")
     _providernames = {}
     # run os discovery check returns hash entries that look like this
     # { 'linux': 0 }. the integer is a priority . The lower the priority

@@ -54,7 +54,7 @@ def test_provider_check(mock_pkg_requires, mock_import,
     mock_me.location = '/me/and/my/loc'
     mock_pkg_requires.return_value = [mock_me]
     assert_equals(nn.provider_check(), 'ubuntu')
-    mock_glob.assert_called_with('')
+    mock_glob.assert_called_with('/me/and/my/loc/../../../share/netshow-lib/providers/*')
 
 
 @mock.patch('netshowlib.netshowlib.provider_check')
