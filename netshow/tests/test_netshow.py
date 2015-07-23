@@ -2,6 +2,7 @@
 # pylint: disable=E0611
 from netshow import netshow
 import mock
+import asserts
 from asserts import assert_equals
 from netshow.netshow import UnableToFindProviderException
 import os
@@ -18,9 +19,10 @@ def test_run(mock_import_module, mock_provider_check):
 
 @mock.patch('netshowlib.netshowlib.provider_check')
 @mock.patch('netshowlib.netshowlib.import_module')
+@asserts.raises(UnableToFindProviderException)
 def test_error_if_no_provider_found(mock_mod, mock_provider):
-    mock_provider.return_value = None
-    assert_equals(netshow.run(), UnableToFindProviderException)
+    mock_provider.return_value = ''
+    netshow.run()
 
 
 @mock.patch('netshowlib.netshowlib.provider_check')

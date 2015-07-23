@@ -26,7 +26,7 @@ def run():
         os.environ['LANGUAGE'] = 'en'
     _ostype = nn.provider_check()
     if not _ostype:
-        return UnableToFindProviderException
+        raise UnableToFindProviderException
     import_str = 'netshow.%s.show' % _ostype
     nn.import_module(import_str).run()
 

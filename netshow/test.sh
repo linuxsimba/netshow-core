@@ -7,6 +7,8 @@ if [ ! -f setup.py ]; then
   cd `dirname $0`
 fi
 
+git clean -xdf
+
 set -e
 
 echo "starting up"
