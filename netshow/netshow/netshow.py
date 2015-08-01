@@ -4,7 +4,7 @@ from netshowlib import _version
 import os
 import sys
 import gettext
-
+import pkg_resources
 
 class UnableToFindProviderException(Exception):
     """
@@ -38,10 +38,12 @@ def i18n_app(providername):
 
     from netshow.netshow import i18n_app as _
     """
-    _translate = gettext.translation(providername,
-                                     os.path.join(sys.prefix,
-                                                  'share', 'locale'),
+    install_location = pkg_resources.require('netshow-core-lib')[0].location
+    translation_loc = os.path.join(install_location, '..', '..', '..', 'share', 'locale')
+
+    _translate = gettext.translation(providername, translation_loc,
                                      fallback=True)
+
     return _translate.lgettext
 
 def print_version():
