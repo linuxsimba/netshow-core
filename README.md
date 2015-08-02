@@ -1,9 +1,9 @@
-# netshow-core
+# netshow core
 
 Netshow is Network Abstraction Software. It is optimized to collect core
 networking data from devices that contain many network interfaces.
 
-The netshow=core respository has 2 main components:
+The netshow core respository has 2 main components:
 
 ### netshow-core-lib:
 This is core library for retrieving network information from a  device and
