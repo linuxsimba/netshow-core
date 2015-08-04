@@ -1,11 +1,15 @@
 # pylint: disable=C0111
 # pylint: disable=E0611
+# pylint: disable=E1102
 from netshow import netshow
 import mock
+import asserts
 from asserts import assert_equals
 from netshow.netshow import UnableToFindProviderException
+
 import os
 import sys
+import pkg_resources
 
 
 @mock.patch('netshowlib.netshowlib.provider_check')
@@ -18,9 +22,10 @@ def test_run(mock_import_module, mock_provider_check):
 
 @mock.patch('netshowlib.netshowlib.provider_check')
 @mock.patch('netshowlib.netshowlib.import_module')
+@asserts.raises(UnableToFindProviderException)
 def test_error_if_no_provider_found(mock_mod, mock_provider):
-    mock_provider.return_value = None
-    assert_equals(netshow.run(), UnableToFindProviderException)
+    mock_provider.return_value = ''
+    netshow.run()
 
 
 @mock.patch('netshowlib.netshowlib.provider_check')
@@ -62,8 +67,10 @@ def test_i18n_app(mock_gettext):
     mock_gettext.return_value = translate_mock
     _result = netshow.i18n_app(provider)
     # check that it calls the right path to the .mo files
+
+    install_location = pkg_resources.require('netshow-core-lib')[0].location
     mock_gettext.assert_called_with(provider, os.path.join(
-        sys.prefix, 'share', 'locale'), fallback=True)
+        install_location, '..', '..', '..', 'share', 'locale'), fallback=True)
     # check that it calls the right gettext function. In this
     # case should be lgettext
     assert_equals(_result._mock_name, 'lgettext')

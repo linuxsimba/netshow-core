@@ -15,7 +15,6 @@
 from asserts import assert_equals, mod_args_generator
 import netshowlib.netshowlib as nn
 import mock
-import sys
 from mock import MagicMock
 
 
@@ -28,7 +27,8 @@ def test_import_module():
 @mock.patch('netshowlib.netshowlib.os.path.dirname')
 @mock.patch('netshowlib.netshowlib.glob.glob')
 @mock.patch('netshowlib.netshowlib.import_module')
-def test_provider_check(mock_import,
+@mock.patch('netshowlib.netshowlib.pkg_resources.require')
+def test_provider_check(mock_pkg_requires, mock_import,
                         mock_glob,
                         mock_os_dirname):
     """ test os discovery """
@@ -50,11 +50,11 @@ def test_provider_check(mock_import,
         'netshowlib.ubuntu.provider_discovery': mock_debian
     }
     mock_import.side_effect = mod_args_generator(values)
+    mock_me = MagicMock()
+    mock_me.location = '/me/and/my/loc'
+    mock_pkg_requires.return_value = [mock_me]
     assert_equals(nn.provider_check(), 'ubuntu')
-
-    sys.real_prefix = 'blah'
-    nn.provider_check()
-    mock_glob.assert_called_with(sys.prefix + '/share/netshow-lib/providers/*')
+    mock_glob.assert_called_with('/me/and/my/loc/../../../share/netshow-lib/providers/*')
 
 
 @mock.patch('netshowlib.netshowlib.provider_check')
@@ -87,6 +87,7 @@ def test_iface_discovery(mock_import, mock_provider_check):
     # confirm syntax for iface_type accepts cache
     mock_debian_iface.iface.assert_called_with('eth1', cache=all_cache)
 
+
 @mock.patch('netshowlib.netshowlib.provider_check')
 @mock.patch('netshowlib.netshowlib.import_module')
 def test_system_discovery(mock_import, mock_provider_check):
@@ -96,6 +97,7 @@ def test_system_discovery(mock_import, mock_provider_check):
     mock_import.return_value = mock_debian_system
     assert_equals(nn.system_summary(), 'debian system summary')
     mock_import.assert_called_with('netshowlib.debian.system_summary')
+
 
 @mock.patch('netshowlib.netshowlib.provider_check')
 @mock.patch('netshowlib.netshowlib.import_module')

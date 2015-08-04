@@ -1,3 +1,4 @@
+# pylint: disable=E1102
 """
 This module does OS discovery , and Interface discovery
 
@@ -6,7 +7,8 @@ This module does OS discovery , and Interface discovery
 import os
 import glob
 import operator
-import sys
+import pkg_resources
+
 
 def import_module(mod_str):
     """
@@ -37,9 +39,9 @@ def provider_check():
     """
 
     # get a list of files under the provider_discovery path
-    # check if in virtualenv instance by looking for real_prefix (virtualenv) or
-    # VIRTUAL_ENV (pvenv)..
-    _dir_entries = glob.glob(sys.prefix + "/share/netshow-lib/providers/*")
+    # use pkg_resources to figure it out
+    install_location = pkg_resources.require('netshow-core-lib')[0].location
+    _dir_entries = glob.glob(install_location + "/../../../share/netshow-lib/providers/*")
     _providernames = {}
     # run os discovery check returns hash entries that look like this
     # { 'linux': 0 }. the integer is a priority . The lower the priority
