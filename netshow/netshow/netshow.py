@@ -1,3 +1,4 @@
+# pylint: disable=E1102
 """ Netshow core module """
 import netshowlib.netshowlib as nn
 from netshowlib import _version
