@@ -58,27 +58,36 @@ Example
 
 ::
 
-    $ netshow l3
-       Name     Speed    MTU    Mode       Summary
-    --  -------  -------  -----  -----      --------------------------------------------------------------------
-    UP  br-mgmt  N/A      1500   Bridge/L3  IP: 192.168.20.11/24
-                                            Untagged: veth2MAFSI, veth6HBXLS,veth7G1VTN, veth9LW4FV, vethADONKK
-                                            Untagged: vethBAGOBS, vethBO11JN,vethF8GUCB, vethHEH94U, vethNGK2SR
-                                            Untagged: vethNTRV1P, vethOEECMP,vethPUB40T, vethR69WUI, vethS7IYJR
-                                            Untagged: vethU4MDPC, vethVPWMIY,vethWHB6XM
-                                            Tagged: eth1
-                                            802.1q Tag: 20
-                                            STP: Disabled
-    UP  eth0     N/A      1500   Access/L3  IP: 192.168.121.106/24(DHCP)
-    UP  eth1     N/A      1500   Trunk/L2   Tagged: br-mgmt
-    UP  lo       N/A      65536  Loopback   IP: 127.0.0.1/8, ::1/128
-    UP  lxcbr0   N/A      1500   Bridge/L3  IP: 10.0.3.1/24
-                                            Untagged: veth22SGDS, veth266GYO,veth29EVK1, veth3P9RFX, veth5394F7
-                                            Untagged: veth9DS81W, vethATOKYC,vethFKCAWE, vethHS2PR0, vethIENOL2
-                                            Untagged: vethQPW2WC, vethR24IIS,vethS37788, vethTMIEW7, vethTV9DFF
-                                            Untagged: vethWF095K, vethYC5MCO,vethYEJ54L
-                                            802.1q Tag: Untagged
-                                            STP: Disabled
+    --------------------------------------------------------------------
+    To view the legend,  rerun "netshow" cmd with the  "--legend" option
+    --------------------------------------------------------------------
+        Name            Speed    MTU    Mode       Summary
+    --  --------------  -------  -----  ---------  ----------------------------------------------------------------
+    UP  br-mgmt         N/A      1500   Bridge/L3  IP: 192.168.20.11/24
+                                                   802.1q Tag: 20
+                                                   STP: Disabled
+                                                   Untagged Members: veth5WQUVA, veth6WQOHK, veth9QKURD, vethC7T63I
+                                                   vethCJVLB0, vethCNHO6U, vethDH3HJN, vethIL9QSD
+                                                   vethJE59U0, vethKHX7YP, vethLWHN0S, vethMLNDOE
+                                                   vethQUF6ME, vethSNCPD3, vethUI07YQ, vethVN2PUS
+                                                   vethX4O674, vethYWI604
+                                                   Tagged Members: eth1
+    UP  br-vlan         N/A      1500   Bridge/L2  802.1q Tag: Untagged
+                                                   STP: Disabled
+                                                   Untagged Members: vethMALSDL
+    UP  brq087285e9-e4  N/A      1500   Bridge/L2  802.1q Tag: 20
+                                                   STP: Disabled
+                                                   Untagged Members: tap141463e6-4e, tapfa96896f-f0
+                                                   Tagged Members: eth2
+    UP  lxcbr0          N/A      1500   Bridge/L3  IP: 10.0.3.1/24
+                                                   802.1q Tag: Untagged
+                                                   STP: Disabled
+                                                   Untagged Members: veth2NPR41, veth4RRO82, veth67W8CB, veth8FTEPM
+                                                   veth9AVA9R, vethA6S7T7, vethCEP462, vethD2U7GF
+                                                   vethD4TJV0, vethHX8KQC, vethKIP4S8, vethL4R007
+                                                   vethOEYR65, vethPSLRGF, vethRQYX9H, vethVAUL56
+                                                   vethXC6NM4, vethYTPAWP
+
 
 Contributing
 ------------
