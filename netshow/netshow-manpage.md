@@ -20,6 +20,11 @@ to view the netshow options available for the provider.
 **-h**, **--help**
 : Display options available by the netshow provider
 
+# REMOVING NETSHOW
+
+Run **apt-get purge netshow --auto-remove**. This removes all netshow components
+from the system
+
 # COPYRIGHT
 Cumulus Networks Inc.
 
