@@ -22,7 +22,7 @@ to view the netshow options available for the provider.
 
 # REMOVING NETSHOW
 
-Run **apt-get purge netshow --auto-remove**. This removes all netshow components
+Run **apt-get purge netshow-core-lib --auto-remove**. This removes all netshow components
 from the system
 
 # COPYRIGHT
