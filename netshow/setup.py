@@ -5,17 +5,19 @@ try:
 except ImportError:
     pass
 import os
+import io
 
 
 def read_contents(fname='README'):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+    return io.open(os.path.join(os.path.dirname(__file__),
+                                fname), encoding="utf-8").read()
 
 from _gitversion import get_version
 from setuptools import setup, find_packages
 setup(
     name='netshow-core',
     version=get_version(),
-    url="http://github.com/CumulusNetworks/netshow",
+    url="http://github.com/CumulusNetworks/netshow-core",
     description="Linux Network Troubleshooting Tool",
     long_description=read_contents(),
     author='Cumulus Networks',
