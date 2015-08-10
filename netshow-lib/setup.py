@@ -8,15 +8,18 @@ except ImportError:
 
 from _gitversion import get_version
 from setuptools import setup, find_packages
+import io
+
 
 def read_contents(fname='README'):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+    return io.open(os.path.join(os.path.dirname(__file__),
+                                fname), encoding="utf-8").read()
 
 setup(
     name='netshow-core-lib',
     version=get_version(),
-    url="http://github.com/CumulusNetworks/netshow-core/neteshow-lib",
-    description="Netshow Core Library. Provides high level user API for lower level providers",
+    url="http://github.com/CumulusNetworks/netshow-core",
+    description="Netshow Core Library. Provides high level user API for netshow providers",
     long_description=read_contents(),
     author='Cumulus Networks',
     author_email='ce-ceng@cumulusnetworks.com',
