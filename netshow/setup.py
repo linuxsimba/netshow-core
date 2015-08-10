@@ -4,9 +4,11 @@ try:
     ez_setup.use_setuptools()
 except ImportError:
     pass
+import os
 
-with open('README') as f:
-    readme_content = f.read().strip()
+
+def read_contents(fname='README'):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 from _gitversion import get_version
 from setuptools import setup, find_packages
@@ -15,7 +17,7 @@ setup(
     version=get_version(),
     url="http://github.com/CumulusNetworks/netshow",
     description="Linux Network Troubleshooting Tool",
-    long_description=readme_content,
+    long_description=read_contents(),
     author='Cumulus Networks',
     author_email='ce-ceng@cumulusnetworks.com',
     packages=find_packages(),
