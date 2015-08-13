@@ -12,11 +12,13 @@ def read_contents(fname='README'):
     return io.open(os.path.join(os.path.dirname(__file__),
                                 fname), encoding="utf-8").read()
 
-from _gitversion import get_version
+# If installing this package from git, make sure to include 'gitversion' in
+# requirements.txt
+from gitversion import rewritable_git_version
 from setuptools import setup, find_packages
 setup(
     name='netshow-core',
-    version=get_version(),
+    version=rewritable_git_version(__file__),
     url="http://github.com/CumulusNetworks/netshow-core",
     description="Linux Network Troubleshooting Tool",
     long_description=read_contents(),

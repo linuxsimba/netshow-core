@@ -6,9 +6,11 @@ try:
 except ImportError:
     pass
 
-from _gitversion import get_version
 from setuptools import setup, find_packages
 import io
+# If installing this package from git, make sure to include 'gitversion' in
+# requirements.txt
+from gitversion import rewritable_git_version
 
 
 def read_contents(fname='README'):
@@ -17,7 +19,7 @@ def read_contents(fname='README'):
 
 setup(
     name='netshow-core-lib',
-    version=get_version(),
+    version=rewritable_git_version(__file__),
     url="http://github.com/CumulusNetworks/netshow-core",
     description="Netshow Core Library. Provides high level user API for netshow providers",
     long_description=read_contents(),
