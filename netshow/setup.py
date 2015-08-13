@@ -4,18 +4,24 @@ try:
     ez_setup.use_setuptools()
 except ImportError:
     pass
+import os
+import io
 
-with open('README') as f:
-    readme_content = f.read().strip()
 
-from _gitversion import get_version
+def read_contents(fname='README'):
+    return io.open(os.path.join(os.path.dirname(__file__),
+                                fname), encoding="utf-8").read()
+
+# If installing this package from git, make sure to include 'gitversion' in
+# requirements.txt
+from gitversion import rewritable_git_version
 from setuptools import setup, find_packages
 setup(
     name='netshow-core',
-    version=get_version(),
-    url="http://github.com/CumulusNetworks/netshow",
+    version=rewritable_git_version(__file__),
+    url="http://github.com/CumulusNetworks/netshow-core",
     description="Linux Network Troubleshooting Tool",
-    long_description=readme_content,
+    long_description=read_contents(),
     author='Cumulus Networks',
     author_email='ce-ceng@cumulusnetworks.com',
     packages=find_packages(),

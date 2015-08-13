@@ -13,7 +13,7 @@ This is core library for retrieving network information from a device
 and abstracting it into Python objects.
 
 Its core module is called ``netshowlib``. It contains a few high levels
-such as ``iface()`` and\ ``system_summary()``, that when called, this
+such as ``iface()`` and ``system_summary()``, that when called, this
 calls a provider that retrieves the information from the system.
 
 A *provider* is module that interacts with the base system and converts

@@ -1,22 +1,28 @@
 # pylint: disable=c0111
+import os
 try:
     import ez_setup
     ez_setup.use_setuptools()
 except ImportError:
     pass
 
-from _gitversion import get_version
 from setuptools import setup, find_packages
+import io
+# If installing this package from git, make sure to include 'gitversion' in
+# requirements.txt
+from gitversion import rewritable_git_version
 
-with open('README') as f:
-    readme_content = f.read().strip()
+
+def read_contents(fname='README'):
+    return io.open(os.path.join(os.path.dirname(__file__),
+                                fname), encoding="utf-8").read()
 
 setup(
     name='netshow-core-lib',
-    version=get_version(),
-    url="http://github.com/CumulusNetworks/netshow-lib",
-    description="Netshow Core Library. Provides high level user API for lower level providers",
-    long_description=readme_content,
+    version=rewritable_git_version(__file__),
+    url="http://github.com/CumulusNetworks/netshow-core",
+    description="Netshow Core Library. Provides high level user API for netshow providers",
+    long_description=read_contents(),
     author='Cumulus Networks',
     author_email='ce-ceng@cumulusnetworks.com',
     packages=find_packages(),

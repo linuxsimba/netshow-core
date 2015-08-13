@@ -1,3 +1,4 @@
+gitversion
 tox
 setuptools
 pip
