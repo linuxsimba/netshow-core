@@ -16,12 +16,28 @@ from asserts import assert_equals, mod_args_generator
 import netshowlib.netshowlib as nn
 import mock
 from mock import MagicMock
+from netshowlib._version import get_version
 
 
 def test_import_module():
     """ test import module """
     ospath = nn.import_module('os.path')
     assert_equals(ospath.exists('/etc/hosts'), True)
+
+
+@mock.patch('netshowlib.netshowlib.pkg_resources.require')
+@mock.patch('netshowlib.netshowlib.glob.glob')
+def test_get_version(mock_glob, mock_require):
+    require_mock = MagicMock()
+    require_mock.version = 'netshowlibver'
+    require_mock.location = '/var/me'
+    mock_require.return_value = [require_mock]
+    mock_glob.return_value = [
+        '/var/me/linux']
+    get_version()
+    mock_require.assert_called_with('netshow-linux-lib')
+    mock_glob.assert_called_with(
+        '/var/me/../../../share/netshow-lib/providers/*')
 
 
 @mock.patch('netshowlib.netshowlib.os.path.dirname')
@@ -110,3 +126,4 @@ def test_portlist(mock_import, mock_provider_check):
     }
     mock_import.side_effect = mod_args_generator(values)
     assert_equals(nn.portname_list(), ['eth22', 'eth33'])
+
