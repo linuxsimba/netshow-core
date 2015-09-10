@@ -10,8 +10,7 @@ from setuptools import setup, find_packages
 import io
 # If installing this package from git, make sure to include 'gitversion' in
 # requirements.txt
-from gitversion import rewritable_git_version
-
+from version import __VERSION__
 
 def read_contents(fname='README'):
     return io.open(os.path.join(os.path.dirname(__file__),
@@ -19,7 +18,7 @@ def read_contents(fname='README'):
 
 setup(
     name='netshow-core-lib',
-    version=rewritable_git_version(__file__),
+    version=__VERSION__,
     url="http://github.com/CumulusNetworks/netshow-core",
     description="Netshow Core Library. Provides high level user API for netshow providers",
     long_description=read_contents(),
