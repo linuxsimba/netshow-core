@@ -11,3 +11,4 @@ netshow/temp1/
 *.pyc
 *.tox
 */venv
+docs/build
