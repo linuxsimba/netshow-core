@@ -1,5 +1,5 @@
-Netshowlib
-===========
+Core Netshowlib - API
+=====================
 .. inheritance-diagram:: netshowlib.netshowlib
   :parts: 3
 
