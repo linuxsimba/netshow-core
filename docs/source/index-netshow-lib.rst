@@ -1,5 +1,6 @@
-The netshow-library (netshow-lib)
-======================================
+**************************************
+The Netshow Library (netshow-lib)
+**************************************
 .. toctree::
     :maxdepth: 2
 

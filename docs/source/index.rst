@@ -1,5 +1,6 @@
-Netshow Documentation
-======================
+*******************************************
+Netshow CLI/ Netshow Library Documentation
+*******************************************
 
 .. toctree::
     :maxdepth: 2

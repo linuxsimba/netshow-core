@@ -1,6 +1,6 @@
-The netshow CLI application (netshow)
-======================================
-
+***************************************
+The Netshow CLI application (netshow)
+***************************************
 .. toctree::
     :maxdepth: 2
 

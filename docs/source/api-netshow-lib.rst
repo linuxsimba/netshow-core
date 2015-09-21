@@ -1,5 +1,5 @@
-Netshow Library API
-====================
+Netshow Library Python Reference
+=================================
 
 This document includes the netshow-lib API for all supported Netshow providers
 
