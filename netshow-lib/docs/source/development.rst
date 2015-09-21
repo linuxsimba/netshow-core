@@ -19,7 +19,7 @@ The netshow-lib directory structure looks like what is shown below
   │   │   ├── common.py
   │   │   ├── bond.py
   │   │   ├── bridge.py
-  │   │   ├── os_discovery.py
+  │   │   ├── provider_discovery.py
   │   │   ├── lldp.py
   │   │   ├── lacp.py
   │   │   ├── iface.py
@@ -28,7 +28,7 @@ The netshow-lib directory structure looks like what is shown below
   │   │   ├── common.py
   │   │   ├── bond.py
   │   │   ├── bridge.py
-  │   │   ├── os_discovery.py
+  │   │   ├── provider_discovery.py
   │   │   ├── lldp.py
   │   │   ├── lacp.py
   │   │   ├── iface.py
@@ -51,7 +51,7 @@ the ``iface.Iface`` of another OS Type. For example one can create an OS type of
 ``linux.iface.Iface``
 
 These modules makes heavy use of
-`Python propeties <https://docs.python.org/3/library/functions.html#property>`_. For example,
+`Python properties <https://docs.python.org/3/library/functions.html#property>`_. For example,
 take the ``mtu`` property. If called, it will grab the latest value from the
 kernel and cache it. If you wish to refresh it, clear the related variable that
 starts with an *underscore*

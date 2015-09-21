@@ -11,8 +11,7 @@ For example, bond information is found in ``/proc/net/bonding`` and
 ``/sys/class/net``. netshow-lib aggregates information from these locations to
 provide a comprenhensive view of the bond
 
-
-* Interface details: link status, ip addresses (ipv4/ipv6), alias, mtu
+* Interface details: Link status, IP addresses (IPv4/IPv6), Port Alias, MTU
 
 * Bonds: Parses information found in ``/proc/net/bonding`` and other
   locations to provide comprehensive bond abstraction and summary information
@@ -27,22 +26,24 @@ provide a comprenhensive view of the bond
 
 * Bridges: abstracts STP, IP info and bridge member information.
   Supports bridge interfaces with VLAN filtering support as well.
-  Currently supports mstpd only. *(Support for the kernel STP soon)*
+  Currently supports the kernel STP and MSTP (*Cumulus Provider only*)
 
 * Basic IP information: ARP and RP filter settings, IP addresses (ipv6/ipv4),
   DHCP settings, DHCP relay configuration.
 
 * *Upcoming*
    * VXLan interface abstraction
+   * Mac address information simplification
 
 
 OS Discovery
 ==============
 
-``netshow-lib`` has an ``os_discovery`` module that is responsible for
+``netshow-lib`` has an ``provider_discovery`` module that is responsible for
 determining the system ``netshow-lib`` is running on. It is called
-by the interface discovery and feature cache discovery mechanisms.
-By default the ``os-discovery`` module detects Linux. Plugins
+by the Interface Discovery and Feature Cache Discovery mechanisms.
+
+By default the ``provider_discovery`` module detects Linux. Plugins
 to ``netshow-lib`` can include sub-modules for other operating system
 or environments.
 

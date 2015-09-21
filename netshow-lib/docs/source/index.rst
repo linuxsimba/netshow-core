@@ -1,8 +1,7 @@
 netshow-lib
 ======================================
-
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 2
 
     features.rst
     installation.rst
@@ -26,27 +25,26 @@ Get LLDP information for an interface. Using ``iface()`` activates provider disc
 
 ::
 
-  from netshowlib import netshowlib
+  from netshowlib import netshowlib as nn
 
   # Create iface object
-  iface = netshowlib.iface('eth1')
+  eth0 = netshowlib.iface('eth0')
 
-  print (netshowlib.os_check())
+  print (netshowlib.provider_check())
   >> 'linux'
 
   # print lldp information from linux system
   print(iface.lldp)
-  >> [something]
+  >>  [{'adj_port': 'fe:42:9d:ff:bb:d0', 'adj_mgmt_ip': '192.168.0.13', 'adj_hostname': 'other-server'}]
 
-Using an OS specific interface. No OS discovery
+
+Using a specific provider, which doing provider discovery
 
 ::
 
-  from netshowlib import netshowlib
+  from netshowlib import netshowlib as nn
 
-  iface = netshowlib.linux.Iface('swp10')
+  iface = nn.linux.Iface('eth0')
 
   print(iface.lldp)
-  >> [something]
-
-
+  >>  [{'adj_port': 'fe:42:9d:ff:bb:d0', 'adj_mgmt_ip': '192.168.0.13', 'adj_hostname': 'other-server'}]
