@@ -1,5 +1,5 @@
 *******************************************
-Netshow CLI/ Netshow Library Documentation
+Netshow Terminal Shell App/ Netshow Library Documentation
 *******************************************
 
 .. toctree::

@@ -1,5 +1,5 @@
 ***************************************
-The Netshow CLI application (netshow)
+The Netshow Terminal App
 ***************************************
 .. toctree::
     :maxdepth: 2
@@ -12,7 +12,7 @@ The Netshow CLI application (netshow)
     credits.rst
 
 
-The netshow CLI application is a client of the ``netshow-lib`` library.
+The netshow Terminal application is a client of the ``netshow-lib`` library.
 
 Netshow is a tool designed for network engineer and data center operators. It
 provides a quick and simple view of the basic networking state of a linux
@@ -21,9 +21,9 @@ interfaces.
 
 The following example is from an Openstack Server
 
+_TODO_
 
 
 This Example is from a Cumulus Switch
 
-
-
+_TODO_

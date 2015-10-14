@@ -8,3 +8,5 @@ Top-level Modules
 
 .. toctree::
   netshowlib.rst
+  Linux Provider API <http://netshow-linux.readthedocs.org/en/latest/netshowlib.html>
+
