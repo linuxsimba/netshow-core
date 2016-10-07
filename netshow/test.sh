@@ -42,7 +42,7 @@ mkdir .temp
 echo "Go into temp install directory"
 cd .temp
 echo " Install netshow-core-lib"
-git clone -b $GIT_BRANCH ssh://git@github.com/CumulusNetworks/netshow-core.git netshow-core
+git clone -b $GIT_BRANCH ssh://git@github.com/linuxsimba/netshow-core.git netshow-core
 cd netshow-core/netshow-lib
 
 echo "Create wheel for netshow-core-lib"
