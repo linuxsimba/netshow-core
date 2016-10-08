@@ -2,17 +2,20 @@
 
 # Testing Script for netshow-core
 
+
 # Switch to the correct directory
 if [ ! -f setup.py ]; then
   cd `dirname $0`
 fi
 
+echo "clean out the whole repo"
+cd ../
 git clean -xdf
+cd netshow
 
 set -e
 
 echo "starting up"
-GIT_BRANCH=test
 PATH=$WORKSPACE/venv/bin:/usr/local/bin:$PATH
 if [ ! -d "venv" ]; then
         virtualenv venv
@@ -38,20 +41,15 @@ mkdir wheel_dir
 echo "Create temp install directory"
 mkdir .temp
 
-# Go into the temp directory and install netshow-lib
-echo "Go into temp install directory"
-cd .temp
-echo " Install netshow-core-lib"
-GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git clone -b $GIT_BRANCH git@github.com:linuxsimba/netshow-core.git netshow-core
-cd netshow-core/netshow-lib
+echo "Go into the netshow-core netshow-lib directory"
+cd ../netshow-lib
 
 echo "Create wheel for netshow-core-lib"
 python setup.py bdist_wheel
 echo "Install wheel in wheel directory"
-cp dist/* ../../../wheel_dir/
+cp dist/* ../netshow/wheel_dir/
 
 # run tox
-echo "Run tox"
-cd ../../../
+echo "Run tox in the netshow directory"
+cd ../netshow/
 tox
-
